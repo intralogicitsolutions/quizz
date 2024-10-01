@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:quiz/screen/forgotPassword.dart';
 import 'package:quiz/theme/theme.dart';
 import 'package:http/http.dart' as http;
 import '../global/global.dart';
@@ -171,8 +172,6 @@ class _LoginFormState extends State<LoginForm> {
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       if (response.statusCode == 200) {
 
-        // Handle success
-
           final userId = responseData['data']['_id'];
           Global.userId = userId; // Set the global user ID
 
@@ -265,6 +264,24 @@ class _LoginFormState extends State<LoginForm> {
             ),
             filled: true,
             fillColor: Colors.grey.shade100,
+          ),
+        ),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ForgotPassword()),
+              );
+            },
+            child: Text(
+              'Forgot Password?',
+              style: TextStyle(
+                color: Colors.purple,
+                decoration: TextDecoration.underline,
+              ),
+            ),
           ),
         ),
         SizedBox(height: 20),

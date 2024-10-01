@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
+import 'package:quiz/model/scoreModel.dart';
 import 'package:quiz/screen/quizPage.dart';
 import 'package:quiz/screen/rankPage.dart';
 import 'package:quiz/theme/theme.dart';
+import 'package:http/http.dart' as http;
+import '../global/global.dart';
 
 class ScorePage extends StatefulWidget {
   final int? totalQuestions;
@@ -11,10 +16,7 @@ class ScorePage extends StatefulWidget {
   final double? scorePercentage;
   final List<int?>? selectedAnswer;
   final List<int>? correctAnswersList;
-  // final String? languageId;
-  // final String? categoryId;
   final String? categoryName;
-  // final String? difficulty;
   final String? examId;
 
   const ScorePage({super.key, this.totalQuestions, this.correctAnswers, this.wrongAnswers, this.scorePercentage, this.selectedAnswer, this.correctAnswersList, this.categoryName, this.examId});
@@ -24,12 +26,88 @@ class ScorePage extends StatefulWidget {
 }
 
 class _ScorePageState extends State<ScorePage> {
+  ScoreModel? scoreModel;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchScoreData();
+  }
+
+  Future<void> fetchScoreData() async {
+    String? userId = Global.userId;
+    if (userId == null) {
+      print('User ID is not available');
+      return;
+    }
+    await storeScore(userId, widget.examId, widget.scorePercentage);
+    final url = 'https://quizz-app-backend-3ywc.onrender.com/score_detail?exam_id=${widget.examId}&user_id=$userId&score=${widget.scorePercentage}';
+    try {
+      final response = await http.get(Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmVkMDczZWQxNjI4OGIxMzBiMjczODgiLCJmaXJzdF9uYW1lIjoiSXNoaXRhICIsImxhc3RfbmFtZSI6InBvc2hpeWEgIiwiZW1haWxfaWQiOiJpc2hpdGFwb3NoaXlhMTgxMUBnbWFpbC5jb20iLCJfX3YiOjAsInJlc2V0X3Rva2VuIjpudWxsLCJyZXNldF90b2tlbl9leHBpcmVzIjpudWxsLCJpYXQiOjE3Mjc3NjIzNTYsImV4cCI6MTcyNzc5MTE1Nn0.B7yKd6xUGCQmpJclYfYV8762mV36e1WnPTUs1ypFuTE"
+        },
+      );
+      print("url is==> $url");
+
+      if (response.statusCode == 200) {
+        // Parse the JSON and update the state
+        setState(() {
+          scoreModel = ScoreModel.fromJson(json.decode(response.body));
+          isLoading = false; // Data has been loaded
+        });
+      } else {
+        setState(() {
+          isLoading = false;  // Stop loading even if there's an error
+        });
+        // Handle non-200 status codes (errors)
+        print('Failed to load data: ${response.statusCode}');
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;  // Stop loading on error
+      });
+      print('Error fetching data: $e');
+    }
+  }
+
+  Future<void> storeScore(String userId, String? examId, double? score) async {
+    final String apiUrl = 'https://quizz-app-backend-3ywc.onrender.com/score_detail';
+
+    try {
+      final response = await http.post(
+              Uri.parse(apiUrl),
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmVkMDczZWQxNjI4OGIxMzBiMjczODgiLCJmaXJzdF9uYW1lIjoiSXNoaXRhICIsImxhc3RfbmFtZSI6InBvc2hpeWEgIiwiZW1haWxfaWQiOiJpc2hpdGFwb3NoaXlhMTgxMUBnbWFpbC5jb20iLCJfX3YiOjAsInJlc2V0X3Rva2VuIjpudWxsLCJyZXNldF90b2tlbl9leHBpcmVzIjpudWxsLCJpYXQiOjE3Mjc3NjIzNTYsImV4cCI6MTcyNzc5MTE1Nn0.B7yKd6xUGCQmpJclYfYV8762mV36e1WnPTUs1ypFuTE"
+              },
+              body: json.encode({
+                'user_id': userId,
+                'exam_id': examId,
+                'score': score,
+              }),
+            );
+      if (response.statusCode == 200) {
+              print('Score stored successfully: ${response.body}');
+            } else {
+              print('Failed to store score: ${response.body}');
+            }
+    }catch(e){
+      print('Error storing score: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       // backgroundColor: Colors.purple[50],
       backgroundColor: Themer.buttonTextColor,
-      body: Center(
+      body: isLoading
+        ? Center(child: CircularProgressIndicator())
+      : Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -193,7 +271,10 @@ class _ScorePageState extends State<ScorePage> {
                           () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => RankPage(examId: widget.examId,)),
+                          MaterialPageRoute(builder: (context) => RankPage(
+                            examId: widget.examId,
+                            scorePercentage: widget.scorePercentage,
+                          )),
                         );
                       }
                   ),
@@ -232,3 +313,39 @@ class _ScorePageState extends State<ScorePage> {
     );
   }
 }
+
+//post api response
+
+// {
+// "status": 200,
+// "message": "Success",
+// "data": {
+// "user_id": "66e967a3a01d561c96a59478",
+// "exam_id": "66f5031879938155964ef390",
+// "score": 95,
+// "_id": "66fbf4a5d1d7cb915451839c",
+// "__v": 0
+// }
+// }
+
+//post api request
+// {
+// "user_id" : "66e967a3a01d561c96a59478",
+// "exam_id" : "66f5031879938155964ef390",
+// "score" : 95
+// }
+
+//get api response
+// {
+// "status": 200,
+// "message": "Success",
+// "data": [
+// {
+// "_id": "66fbf4a5d1d7cb915451839c",
+// "user_id": "66e967a3a01d561c96a59478",
+// "exam_id": "66f5031879938155964ef390",
+// "score": 95,
+// "__v": 0
+// }
+// ]
+// }

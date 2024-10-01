@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:quiz/global/global.dart';
 import 'package:quiz/theme/theme.dart';
-import 'package:http/http.dart' as http;
 import '../model/languageModel.dart';
 import 'categorySelection.dart';
 

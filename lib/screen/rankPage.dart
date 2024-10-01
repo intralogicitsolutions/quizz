@@ -9,7 +9,8 @@ import '../model/rankModel.dart';
 
 class RankPage extends StatefulWidget {
   final String? examId;
-  const RankPage({super.key, this.examId});
+  final double? scorePercentage;
+  const RankPage({super.key, this.examId, this.scorePercentage});
 
   @override
   State<RankPage> createState() => _RankPageState();
@@ -32,13 +33,14 @@ class _RankPageState extends State<RankPage> {
       print('User ID is not available');
       return;
     }
+    // await storeScore(userId, widget.examId, widget.scorePercentage);
     final url = 'https://quizz-app-backend-3ywc.onrender.com/score_detail?exam_id=${widget.examId}&user_id=$userId';
 
     try {
       final response = await http.get(Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmVkMDczZWQxNjI4OGIxMzBiMjczODgiLCJmaXJzdF9uYW1lIjoiSXNoaXRhICIsImxhc3RfbmFtZSI6InBvc2hpeWEgIiwiZW1haWxfaWQiOiJpc2hpdGFwb3NoaXlhMTgxMUBnbWFpbC5jb20iLCJfX3YiOjAsImlhdCI6MTcyNzM1NjE5OSwiZXhwIjoxNzI3Mzg0OTk5fQ.FVWQRHz5MBpng_NAmufk-tRREgiDa4jtrZrohVZ4sLk"
+          'Authorization': "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmVkMDczZWQxNjI4OGIxMzBiMjczODgiLCJmaXJzdF9uYW1lIjoiSXNoaXRhICIsImxhc3RfbmFtZSI6InBvc2hpeWEgIiwiZW1haWxfaWQiOiJpc2hpdGFwb3NoaXlhMTgxMUBnbWFpbC5jb20iLCJfX3YiOjAsInJlc2V0X3Rva2VuIjpudWxsLCJyZXNldF90b2tlbl9leHBpcmVzIjpudWxsLCJpYXQiOjE3Mjc3NjIzNTYsImV4cCI6MTcyNzc5MTE1Nn0.B7yKd6xUGCQmpJclYfYV8762mV36e1WnPTUs1ypFuTE"
         },
       );
       print("url is==> $url");
@@ -64,6 +66,33 @@ class _RankPageState extends State<RankPage> {
     }
   }
 
+  // Future<void> storeScore(String userId, String? examId, double? score) async {
+  //   final String apiUrl = 'https://quizz-app-backend-3ywc.onrender.com/score_detail'; // Your POST API endpoint
+  //
+  //   try {
+  //     final response = await http.post(
+  //       Uri.parse(apiUrl),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmVkMDczZWQxNjI4OGIxMzBiMjczODgiLCJmaXJzdF9uYW1lIjoiSXNoaXRhICIsImxhc3RfbmFtZSI6InBvc2hpeWEgIiwiZW1haWxfaWQiOiJpc2hpdGFwb3NoaXlhMTgxMUBnbWFpbC5jb20iLCJfX3YiOjAsImlhdCI6MTcyNzY4NTgyNywiZXhwIjoxNzI3NzE0NjI3fQ.q82TfmMWK8DNunv6k3TAg8Cq9ALL_Fjxfhf9Ij7T8Xw"
+  //       },
+  //       body: json.encode({
+  //         'user_id': userId,
+  //         'exam_id': examId,
+  //         'score': score,
+  //       }),
+  //     );
+  //
+  //     if (response.statusCode == 200) {
+  //       print('Score stored successfully: ${response.body}');
+  //     } else {
+  //       print('Failed to store score: ${response.body}');
+  //     }
+  //   } catch (e) {
+  //     print('Error storing score: $e');
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -86,44 +115,10 @@ class _RankPageState extends State<RankPage> {
           : rankModel != null
           ? buildRankContent(rankModel!)
           : Center(child: Text('Failed to load data')),
-      // Padding(
-      //   padding: const EdgeInsets.all(16.0),
-      //   child: Column(
-      //     mainAxisAlignment: MainAxisAlignment.center,
-      //     children: [
-      //        Stack(
-      //          children: [
-      //            Image.asset("assets/images/winnercup2.png"),
-      //            Positioned(
-      //                top: 135,
-      //                left: 130,
-      //                child: Text('Rank 20',style: TextStyle(fontSize: 20,color: Colors.white),))
-      //          ],
-      //        ),
-      //       SizedBox(height: 30),
-      //
-      //       // Congratulatory text
-      //       Text(
-      //         'Congratulations, you\'ve completed this quiz!',
-      //         style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-      //         textAlign: TextAlign.center,
-      //       ),
-      //       SizedBox(height: 20),
-      //
-      //       // Subtext
-      //       Text(
-      //         'Let\'s keep honing your knowledge by playing more quizzes!',
-      //         style: TextStyle(fontSize: 16, color: Colors.grey),
-      //         textAlign: TextAlign.center,
-      //       ),
-      //       SizedBox(height: 40),
-      //     ],
-      //   ),
-      // ),
     );
   }
   Widget buildRankContent(RankModel rankModel) {
-    final userRank = rankModel.data?.first.rank ?? 'Unknown';  // Get user's rank
+  //  final userRank = rankModel.data?.first.rank ?? 'Unknown';  // Get user's rank
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -136,7 +131,7 @@ class _RankPageState extends State<RankPage> {
                 top: 135,
                 left: 130,
                 child: Text(
-                  'Rank $userRank', // Display the fetched rank
+                  'Rank 1', // Display the fetched rank
                   style: TextStyle(fontSize: 20, color: Colors.white),
                 ),
               ),
@@ -165,3 +160,39 @@ class _RankPageState extends State<RankPage> {
   }
 }
 
+
+//post api request
+
+// {
+// "user_id" : "66e967a3a01d561c96a59478",
+// "exam_id" : "66f5031879938155964ef390",
+// "score" : 95
+// }
+
+//POST API RESPONSE
+// {
+// "status": 200,
+// "message": "Success",
+// "data": {
+// "user_id": "66e967a3a01d561c96a59478",
+// "exam_id": "66f5031879938155964ef390",
+// "score": 95,
+// "_id": "66fbf4a5d1d7cb915451839c",
+// "__v": 0
+// }
+// }
+
+//GET API RESPONSE
+// {
+// "status": 200,
+// "message": "Success",
+// "data": [
+// {
+// "_id": "66fbf4a5d1d7cb915451839c",
+// "user_id": "66e967a3a01d561c96a59478",
+// "exam_id": "66f5031879938155964ef390",
+// "score": 95,
+// "__v": 0
+// }
+// ]
+// }
