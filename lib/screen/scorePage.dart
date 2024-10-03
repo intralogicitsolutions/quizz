@@ -28,6 +28,7 @@ class ScorePage extends StatefulWidget {
 class _ScorePageState extends State<ScorePage> {
   ScoreModel? scoreModel;
   bool isLoading = true;
+  String? scoreId;
 
   @override
   void initState() {
@@ -42,23 +43,39 @@ class _ScorePageState extends State<ScorePage> {
       print('User ID is not available');
       return;
     }
-    await storeScore(userId, widget.examId, widget.scorePercentage);
+
+   // await storeScore(userId, widget.examId, widget.scorePercentage);
     final url = 'https://quizz-app-backend-3ywc.onrender.com/score_detail?exam_id=${widget.examId}&user_id=$userId&score=${widget.scorePercentage}';
     try {
       final response = await http.get(Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmVkMDczZWQxNjI4OGIxMzBiMjczODgiLCJmaXJzdF9uYW1lIjoiSXNoaXRhICIsImxhc3RfbmFtZSI6InBvc2hpeWEgIiwiZW1haWxfaWQiOiJpc2hpdGFwb3NoaXlhMTgxMUBnbWFpbC5jb20iLCJfX3YiOjAsInJlc2V0X3Rva2VuIjpudWxsLCJyZXNldF90b2tlbl9leHBpcmVzIjpudWxsLCJpYXQiOjE3Mjc3NjIzNTYsImV4cCI6MTcyNzc5MTE1Nn0.B7yKd6xUGCQmpJclYfYV8762mV36e1WnPTUs1ypFuTE"
+          'Authorization': "Bearer ${Global.token}"
         },
       );
       print("url is==> $url");
-
+      print("status code is ===> ${response.statusCode}");
       if (response.statusCode == 200) {
-        // Parse the JSON and update the state
+        final responseData = json.decode(response.body);
+        final data = responseData['data'];
+        //final data1 = json.decode(response.body)['data'];
+        if (data != null && data.isNotEmpty) {
+          String existingScoreId = data[0]['_id'];
+          // Score already exists for this exam and user, update the score
+          scoreModel = ScoreModel.fromJson(data[0]);
+          await updateScore(existingScoreId, widget.scorePercentage);
+          print('data of id is ==> ${existingScoreId}');
+        } else {
+          // Score doesn't exist, store a new score
+          await storeScore(userId, widget.examId, widget.scorePercentage);
+        }
         setState(() {
-          scoreModel = ScoreModel.fromJson(json.decode(response.body));
+          scoreModel = ScoreModel.fromJson(json.decode(response.body)['data'][0]);
+          print(response.body);
+          scoreId = data[0]['_id'];
           isLoading = false; // Data has been loaded
         });
+        print('scoreId : ${scoreId}');
       } else {
         setState(() {
           isLoading = false;  // Stop loading even if there's an error
@@ -82,7 +99,7 @@ class _ScorePageState extends State<ScorePage> {
               Uri.parse(apiUrl),
               headers: {
                 'Content-Type': 'application/json',
-                'Authorization': "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmVkMDczZWQxNjI4OGIxMzBiMjczODgiLCJmaXJzdF9uYW1lIjoiSXNoaXRhICIsImxhc3RfbmFtZSI6InBvc2hpeWEgIiwiZW1haWxfaWQiOiJpc2hpdGFwb3NoaXlhMTgxMUBnbWFpbC5jb20iLCJfX3YiOjAsInJlc2V0X3Rva2VuIjpudWxsLCJyZXNldF90b2tlbl9leHBpcmVzIjpudWxsLCJpYXQiOjE3Mjc3NjIzNTYsImV4cCI6MTcyNzc5MTE1Nn0.B7yKd6xUGCQmpJclYfYV8762mV36e1WnPTUs1ypFuTE"
+                'Authorization': "Bearer ${Global.token}"
               },
               body: json.encode({
                 'user_id': userId,
@@ -97,6 +114,30 @@ class _ScorePageState extends State<ScorePage> {
             }
     }catch(e){
       print('Error storing score: $e');
+    }
+  }
+
+  Future<void> updateScore(String id, double? score) async{
+    final String apiUrl = 'https://quizz-app-backend-3ywc.onrender.com/score_detail?_id=${id}';
+    try {
+      final response = await http.put(
+        Uri.parse(apiUrl),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': "Bearer ${Global.token}"
+        },
+        body: json.encode({
+          '_id': id,
+          'score': score,
+        }),
+      );
+      if (response.statusCode == 200) {
+        print('Score update successfully: ${response.body}');
+      } else {
+        print('Failed to update score: ${response.body}');
+      }
+    }catch(e){
+      print('Error updating score: $e');
     }
   }
 
@@ -240,10 +281,7 @@ class _ScorePageState extends State<ScorePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => QuizPage(reviewMode: false,
-                            // languageId: widget.languageId,
-                            // categoryId: widget.categoryId,
                             categoryName: widget.categoryName,
-                            // difficulty: widget.difficulty,
                             examId: widget.examId,
 
                           )),
@@ -274,6 +312,7 @@ class _ScorePageState extends State<ScorePage> {
                           MaterialPageRoute(builder: (context) => RankPage(
                             examId: widget.examId,
                             scorePercentage: widget.scorePercentage,
+                            scoreId: scoreId,
                           )),
                         );
                       }
@@ -348,4 +387,202 @@ class _ScorePageState extends State<ScorePage> {
 // "__v": 0
 // }
 // ]
+// }
+
+
+
+// import 'dart:convert';
+// import 'package:avatar_glow/avatar_glow.dart';
+// import 'package:flutter/material.dart';
+// import 'package:http/http.dart' as http;
+// import '../global/global.dart';
+//
+// class ScorePage extends StatefulWidget {
+//   final int? totalQuestions;
+//   final int? correctAnswers;
+//   final int? wrongAnswers;
+//   final double? scorePercentage;
+//   final List<int?>? selectedAnswer;
+//   final List<int>? correctAnswersList;
+//   final String? categoryName;
+//   final String? examId;
+//
+//   const ScorePage({
+//     super.key,
+//     this.totalQuestions,
+//     this.correctAnswers,
+//     this.wrongAnswers,
+//     this.scorePercentage,
+//     this.selectedAnswer,
+//     this.correctAnswersList,
+//     this.categoryName,
+//     this.examId,
+//   });
+//
+//   @override
+//   State<ScorePage> createState() => _ScorePageState();
+// }
+//
+// class _ScorePageState extends State<ScorePage> {
+//   bool isLoading = true;
+//   Map<String, dynamic>? scoreData;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     fetchScoreData();
+//   }
+//
+//   Future<void> fetchScoreData() async {
+//     String? userId = Global.userId;
+//     if (userId == null) {
+//       print('User ID is not available');
+//       return;
+//     }
+//
+//     final String apiUrl = 'http://localhost:3000/score_detail'
+//         '?exam_id=${widget.examId}&user_id=$userId&score=${widget.scorePercentage}';
+//
+//     try {
+//       // Perform the GET request to fetch the score
+//       final response = await http.get(Uri.parse(apiUrl),
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer your_token_here',
+//         },
+//       );
+//
+//       if (response.statusCode == 200) {
+//         setState(() {
+//           scoreData = json.decode(response.body)['data'][0];
+//           isLoading = false;  // Data has been loaded
+//         });
+//         print('Score fetched successfully: $scoreData');
+//       } else {
+//         setState(() {
+//           isLoading = false;  // Stop loading even if there's an error
+//         });
+//         print('Failed to load data: ${response.statusCode}');
+//       }
+//     } catch (e) {
+//       setState(() {
+//         isLoading = false;  // Stop loading on error
+//       });
+//       print('Error fetching data: $e');
+//     }
+//   }
+//
+//   Future<void> storeScore(String userId, String? examId, double? score) async {
+//     final String apiUrl = 'http://localhost:3000/score_detail';
+//
+//     try {
+//       // Perform the POST request to store the score
+//       final response = await http.post(
+//         Uri.parse(apiUrl),
+//         headers: {
+//           'Content-Type': 'application/json',
+//           'Authorization': 'Bearer your_token_here',
+//         },
+//         body: json.encode({
+//           'user_id': userId,
+//           'exam_id': examId,
+//           'score': score,
+//         }),
+//       );
+//
+//       if (response.statusCode == 200) {
+//         print('Score stored successfully: ${response.body}');
+//       } else {
+//         print('Failed to store score: ${response.body}');
+//       }
+//     } catch (e) {
+//       print('Error storing score: $e');
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.purple[50],
+//       body: isLoading
+//           ? Center(child: CircularProgressIndicator())
+//           : Center(
+//         child: Padding(
+//           padding: const EdgeInsets.all(20.0),
+//           child: Column(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: <Widget>[
+//               AvatarGlow(
+//                 glowColor: Colors.purple,
+//                 glowRadiusFactor: 0.09,
+//                 glowCount: 3,
+//                // endRadius: 120.0,
+//                 glowShape: BoxShape.circle,
+//                 curve: Curves.decelerate,
+//                 duration: Duration(milliseconds: 2000),
+//                 repeat: true,
+//                 animate: true,
+//                 //showTwoGlows: true,
+//                 child: Material(
+//                   elevation: 8.0,
+//                   shape: CircleBorder(),
+//                   child: CircleAvatar(
+//                     backgroundColor: Colors.purple[100],
+//                     radius: 100.0,
+//                     child: Column(
+//                       mainAxisAlignment: MainAxisAlignment.center,
+//                       children: [
+//                         Text(
+//                           'Your Score',
+//                           style: TextStyle(
+//                             fontSize: 25,
+//                             fontWeight: FontWeight.bold,
+//                             color: Colors.purple,
+//                           ),
+//                         ),
+//                         SizedBox(height: 10),
+//                         Text(
+//                           '${widget.scorePercentage?.toStringAsFixed(0)}%',
+//                           style: TextStyle(
+//                             fontSize: 25,
+//                             fontWeight: FontWeight.bold,
+//                             color: Colors.purple,
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               SizedBox(height: 30),
+//               scoreDetails(),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+//
+//   Widget scoreDetails() {
+//     return Container(
+//       padding: EdgeInsets.all(20),
+//       decoration: BoxDecoration(
+//         color: Colors.white,
+//         borderRadius: BorderRadius.circular(15),
+//         boxShadow: [
+//           BoxShadow(
+//             color: Colors.black.withOpacity(0.25),
+//             blurRadius: 20,
+//             offset: Offset(5, 5),
+//           ),
+//         ],
+//       ),
+//       child: Column(
+//         children: <Widget>[
+//           // Display score details here
+//           Text('Score Details: ${scoreData?['score']}'),
+//         ],
+//       ),
+//     );
+//   }
 // }

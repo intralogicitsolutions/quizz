@@ -5,11 +5,15 @@ import 'package:quiz/screen/rankPage.dart';
 import 'package:quiz/screen/scorePage.dart';
 import 'package:quiz/screen/splash.dart';
 
+import 'global/global.dart';
+import 'global/tokenStorage.dart';
 import 'screen/categorySelection.dart';
 import 'screen/languageSelection.dart';
 import 'screen/login.dart';
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  Global.token = await TokenStorage.getToken();
   runApp(const MyApp());
 }
 

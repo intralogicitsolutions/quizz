@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:quiz/global/global.dart';
 import 'package:quiz/model/quizModel.dart' as quizModel;
 import 'package:quiz/screen/scorePage.dart';
 import 'package:quiz/theme/theme.dart';
@@ -61,7 +62,7 @@ class _QuizPageState extends State<QuizPage> {
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmVkMDczZWQxNjI4OGIxMzBiMjczODgiLCJmaXJzdF9uYW1lIjoiSXNoaXRhICIsImxhc3RfbmFtZSI6InBvc2hpeWEgIiwiZW1haWxfaWQiOiJpc2hpdGFwb3NoaXlhMTgxMUBnbWFpbC5jb20iLCJfX3YiOjAsInJlc2V0X3Rva2VuIjpudWxsLCJyZXNldF90b2tlbl9leHBpcmVzIjpudWxsLCJpYXQiOjE3Mjc3NjIzNTYsImV4cCI6MTcyNzc5MTE1Nn0.B7yKd6xUGCQmpJclYfYV8762mV36e1WnPTUs1ypFuTE"
+          'Authorization': "Bearer ${Global.token}"
         },
       );
 print("quiz data response ===> ${response.statusCode}");

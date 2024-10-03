@@ -6,6 +6,7 @@ import 'package:quiz/screen/forgotPassword.dart';
 import 'package:quiz/theme/theme.dart';
 import 'package:http/http.dart' as http;
 import '../global/global.dart';
+import '../global/tokenStorage.dart';
 import 'languageSelection.dart';
 
 class Login extends StatefulWidget{
@@ -175,7 +176,12 @@ class _LoginFormState extends State<LoginForm> {
           final userId = responseData['data']['_id'];
           Global.userId = userId; // Set the global user ID
 
+          final token = responseData['data']['access_token'];
+          await TokenStorage.saveToken(token);
+          //Global.token = token;
+
         print(Global.userId);
+       // print('Globle token data ==> ${Global.token}');
         print('Access Token: ${responseData['data']['access_token']}');
         print('responseData ==> ${responseData}');
         Navigator.pushReplacement(
