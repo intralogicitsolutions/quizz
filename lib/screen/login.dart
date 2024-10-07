@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:quiz/screen/forgotPassword.dart';
 import 'package:quiz/theme/theme.dart';
 import 'package:http/http.dart' as http;
@@ -19,6 +17,7 @@ class Login extends StatefulWidget{
 class _LoginState extends State<Login> {
 
   bool isLogin = true;
+
 
   @override
   Widget build(BuildContext context) {
@@ -48,23 +47,7 @@ class _LoginState extends State<Login> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // Image.asset(
-                  //   'assets/illustration.png', // Add your illustration image
-                  //   height: 150,
-                  // ),
                  SizedBox(height: 30),
-                  // Text(
-                  //    'QUIZ',
-                  //   style: TextStyle(
-                  //     color: Themer.buttonColor,
-                  //     fontSize: 28,
-                  //     fontWeight: FontWeight.bold,
-                  //   ),
-                  // ),
-                  // SvgPicture.asset(
-                  //   "assets/images/quiz_logo.svg",
-                  //   // colorFilter: ColorFilter.mode(Themer.buttonColor, BlendMode.srcIn),
-                  // ),
                   Image.asset("assets/images/quiz_logo1.png",height: 130),
                   //SizedBox(height: 30),
                   SizedBox(height: 10),
@@ -111,6 +94,7 @@ class _LoginFormState extends State<LoginForm> {
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool isPasswordVisible = false;
 
   final String signupUrl = 'https://quizz-app-backend-3ywc.onrender.com/auth/signup';
   final String signinUrl = 'https://quizz-app-backend-3ywc.onrender.com/auth/signin';
@@ -178,6 +162,7 @@ class _LoginFormState extends State<LoginForm> {
 
           final token = responseData['data']['access_token'];
           await TokenStorage.saveToken(token);
+          print('token===> ${token}');
           //Global.token = token;
 
         print(Global.userId);
@@ -261,10 +246,18 @@ class _LoginFormState extends State<LoginForm> {
         SizedBox(height: 10),
         TextField(
           controller: _passwordController,
-          obscureText: true,
+          obscureText: !isPasswordVisible,
           decoration: InputDecoration(
             labelText: 'Password',
-            prefixIcon: Icon(Icons.lock),
+            prefixIcon: IconButton(
+                icon: Icon(isPasswordVisible ? Icons.lock_open : Icons.lock,),
+              onPressed: () {
+                // Toggle the visibility state when the icon is clicked
+                setState(() {
+                  isPasswordVisible = !isPasswordVisible;
+                });
+              },
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
             ),

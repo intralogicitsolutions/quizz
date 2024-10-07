@@ -235,9 +235,10 @@ print("url is==> ${url}");
         correctAnswersList: quizData!.data!.map((e) => e.correctAnswer!).toList(),
         categoryName: widget.categoryName,
         examId: widget.examId,
+        questionId: quizData!.data!.map((e) => e.sId!).toList(),
+        userAnswer: selectedAnswers,
       )),
     );
-
   }
 
   // Finish the quiz
@@ -275,6 +276,8 @@ print("url is==> ${url}");
                     confettiController.stop();
                     print('selectd answer is --> ${selectedAnswers}');
                     print('selectd answer from widget --> ${widget.selectedAnswers}');
+                    print('question id list ----> ${quizData!.data!.map((e) => e.sId!).toList()}');
+                    print('selected answer ----> ${selectedAnswers}');
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => ScorePage(
@@ -286,6 +289,9 @@ print("url is==> ${url}");
                           correctAnswersList: quizData!.data!.map((e) => e.correctAnswer!).toList(),
                           categoryName: widget.categoryName,
                           examId: widget.examId,
+                          questionId: quizData!.data!.map((e) => e.sId!).toList(),
+                          userAnswer: selectedAnswers,
+
                         )),
                       );
                   },
@@ -301,13 +307,6 @@ print("url is==> ${url}");
 
   @override
   Widget build(BuildContext context) {
-   // final int correctAnswer = 0;
-    // final question = questions[currentQuestionIndex]['question'] as String;
-    // final answers = questions[currentQuestionIndex]['answers'] as List<String>;
-    // if (quizData == null || quizData!.data == null || quizData!.data!.isEmpty) {
-    //   return Center(child: CircularProgressIndicator());
-    // }
-
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.categoryName}'.toUpperCase(),
@@ -350,15 +349,6 @@ print("url is==> ${url}");
                   ),
                   //const SizedBox(height: 20),
                 ],
-
-                // Text(
-                //   formatDuration(quizDuration),
-                //   style: TextStyle(
-                //     fontSize: 18,
-                //     fontWeight: FontWeight.bold,
-                //     color: Colors.red,
-                //   ),
-                // ),
               ],
             ),
             SizedBox(height: 15),
@@ -375,13 +365,7 @@ print("url is==> ${url}");
                   int correctAnswerIndex = quizData!.data![currentQuestionIndex].correctAnswer!;
                   return GestureDetector(
                     onTap:
-                   // widget.reviewMode ? null :
                         () => selectAnswer(index),
-                    //    onTap: () {
-                    //      if (widget.reviewMode) {
-                    //        selectAnswer(index);
-                    //      }
-                    //    },
                     child: Container(
                       margin: EdgeInsets.symmetric(vertical: 8),
                       padding: EdgeInsets.all(15),
@@ -434,24 +418,6 @@ print("url is==> ${url}");
                               size: 22,
                             ):null,
 
-                            // selectedAnswers?[currentQuestionIndex] == index
-                            // //selectedAnswerIndex == index
-                            //     ? widget.reviewMode ? Icon(
-                            //   selectedAnswers![currentQuestionIndex] == correctAnswerIndex
-                            //       ? Icons.check_circle
-                            //       : Icons.cancel,
-                            //   color: selectedAnswers![currentQuestionIndex] == correctAnswerIndex
-                            //       ? Colors.green
-                            //       : Colors.red,
-                            //   // Icons.check_circle,
-                            //   // color: Theme.of(context).primaryColor,
-                            //   // size: 22,
-                            // ):Icon(
-                            //   Icons.check_circle,
-                            //   color: Theme.of(context).primaryColor,
-                            //   size: 22,
-                            // )
-                            //     : null,
                           ),
                           SizedBox(width: 10),
                           Expanded(
