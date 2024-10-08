@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:quiz/global/global.dart';
 import 'package:quiz/model/quizModel.dart' as quizModel;
 import 'package:quiz/screen/scorePage.dart';

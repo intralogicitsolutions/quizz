@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:quiz/screen/questionSelection.dart';
 import 'package:quiz/theme/theme.dart';
-import 'package:http/http.dart' as http;
-
 import '../global/global.dart';
 import '../model/categoryModel.dart';
 
@@ -34,52 +32,15 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
 
   Future<void> fetchCategory() async{
     Global.get("category", {}).then((response) {
-      //final data = jsonDecode(response.body);
       final jsonResponse = jsonDecode(response.body);
-      CategoryModel categoryModel = CategoryModel.fromJson(jsonResponse);
+   //  CategoryModel categoryModel = CategoryModel.fromJson(jsonResponse);
       setState(() {
-        // _languages = List<String>.from(
-        //     data['data'].map((lang) => lang['name'])); // Extract language names
-
-        // _categories = categoryModel.data ?? [];
-       // _categories = categoryModel.data ?? [];
         _categories = (jsonResponse['data'] as List).map((item) => Data.fromJson(item)).toList();
-
-        // _categories = List<Map<String, dynamic>>.from(data['data'].map((category) => {
-        //   'icon': category['icon'],
-        //   'label': category['name'],
-        // }));
         isLoading = false;
       });
     }).catchError((error) {
       print('Error: $error');
     });
-
-
-    //
-    // final url = "https://quizz-app-backend-3ywc.onrender.com/category";
-    // try{
-    //   final response = await http.get(Uri.parse(url),
-    //       headers: {'Content-Type': 'application/json',
-    //         "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmVkMDczZWQxNjI4OGIxMzBiMjczODgiLCJmaXJzdF9uYW1lIjoiSXNoaXRhICIsImxhc3RfbmFtZSI6InBvc2hpeWEgIiwiZW1haWxfaWQiOiJpc2hpdGFwb3NoaXlhMTgxMUBnbWFpbC5jb20iLCJfX3YiOjAsImlhdCI6MTcyNzA2Nzc3MiwiZXhwIjoxNzI3MDk2NTcyfQ.RHEZqv09mMTeivLoZQXPbocg09BF8Jtl0RwdwIggqAY"
-    //       });
-    //       if (response.statusCode == 200) {
-    //         // final data = jsonDecode(response.body);
-    //         CategoryModel categoryModel = CategoryModel.fromJson(jsonResponse(response.body));
-    //         setState(() {
-    //           _categories = List<Map<String, dynamic>>.from(data['data'].map((category) => {
-    //             'icon': category['icon'],
-    //             'label': category['name'],
-    //           }));
-    //           isLoading = false;
-    //         });
-    //       }
-    //       else{
-    //         throw Exception('Failed to load categories');
-    //       }
-    // }catch(e){
-    //   print('Error: $e');
-    // }
   }
 
   IconData _getIconData(String iconName) {

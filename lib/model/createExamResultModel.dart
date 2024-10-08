@@ -23,7 +23,7 @@ class Data {
   String? sId;
   String? userId;
   String? examId;
-  int? score;
+  double? score;
   List<Result>? result;
 
   Data({this.sId, this.userId, this.examId, this.score, this.result});

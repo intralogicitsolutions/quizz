@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:quiz/model/createRankModel.dart';
 import 'package:quiz/theme/theme.dart';
@@ -58,7 +59,7 @@ class _RankPageState extends State<RankPage> {
                 top: 135,
                 left: 130,
                 child: Text(
-                  'Rank ${widget.rank}', // Display the fetched rank
+                  widget.rank != null ? 'Rank ${widget.rank}' : '', // Display the fetched rank
                   style: TextStyle(fontSize: 20, color: Colors.white),
                 ),
               ),

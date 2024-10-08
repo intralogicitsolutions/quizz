@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:quiz/model/createExamResultModel.dart';
 import 'package:quiz/model/scoreModel.dart';
 import 'package:quiz/screen/quizPage.dart';
@@ -72,7 +73,6 @@ class _ScorePageState extends State<ScorePage> {
         print("Rank ::::: $rank");
         return ExamRersultModel.fromJson(responseData);
       } else {
-
         print('Failed to get exam result: ${response.body}');
         return null;
       }
@@ -125,6 +125,13 @@ class _ScorePageState extends State<ScorePage> {
       'score': score,
       'user_id': Global.userId,
       'exam_id': widget.examId,
+      'result': [
+        {
+          '_id': id,
+          'question_id': widget.questionId,
+          'user_answer': widget.userAnswer,
+        }
+      ]
     };
 
     try{
@@ -469,7 +476,7 @@ class _ScorePageState extends State<ScorePage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => RankPage(
-                            rank: rank!,
+                            rank: rank,
                           )),
                         );
                       }

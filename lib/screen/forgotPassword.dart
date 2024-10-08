@@ -1,7 +1,11 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:quiz/screen/resetPassword.dart';
+
+import '../theme/theme.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -38,19 +42,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             ),
           );
         }
-        // showDialog(
-        //   context: context,
-        //   builder: (context) => AlertDialog(
-        //     title: Text('Success'),
-        //     content: Text('Password reset link sent to your email.'),
-        //     actions: [
-        //       TextButton(
-        //         onPressed: () => Navigator.pop(context),
-        //         child: Text('OK'),
-        //       ),
-        //     ],
-        //   ),
-        // );
       } else {
         // Handle error
         showDialog(
@@ -76,7 +67,21 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Forgot Password')),
+      appBar: AppBar(
+          title: Text('Forgot Password'.toUpperCase(),
+            style: TextStyle(color: Colors.black, fontSize: 20,fontWeight: FontWeight.w400,),),
+        centerTitle: false,
+        leading: IconButton(
+          icon: SvgPicture.asset(
+            "assets/images/ios-back-arrow.svg",
+            // color: Colors.blue,
+            colorFilter: ColorFilter.mode(Themer.buttonColor, BlendMode.srcIn),
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+          ),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
