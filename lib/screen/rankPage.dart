@@ -60,19 +60,19 @@ class _RankPageState extends State<RankPage> {
                 left: 130,
                 child: Text(
                   widget.rank != null ? 'Rank ${widget.rank}' : '', // Display the fetched rank
-                  style: TextStyle(fontSize: 20, color: Colors.white),
+                  style: const TextStyle(fontSize: 20, color: Colors.white),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 30),
-          Text(
+          const SizedBox(height: 30),
+          const Text(
             'Congratulations, you\'ve completed this quiz!',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
-          SizedBox(height: 20),
-          Text(
+          const SizedBox(height: 20),
+          const Text(
             'Let\'s keep honing your knowledge by playing more quizzes!',
             style: TextStyle(fontSize: 16, color: Colors.grey),
             textAlign: TextAlign.center,

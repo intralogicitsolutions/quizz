@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:quiz/global/global.dart';
 import 'package:quiz/model/quizModel.dart' as quizModel;
 import 'package:quiz/screen/scorePage.dart';
@@ -107,8 +108,8 @@ print("url is==> ${url}");
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text('Time is up!'),
-        content: Text('Your quiz time is over. The quiz will now finish.'),
+        title: const Text('Time is up!'),
+        content: const Text('Your quiz time is over. The quiz will now finish.'),
         actions: [
           TextButton(
             onPressed: () {
@@ -116,7 +117,7 @@ print("url is==> ${url}");
               // Perform any action when time is up, such as submitting quiz
               finishQuiz();
             },
-            child: Text('OK'),
+            child: const Text('OK'),
           ),
         ],
       ),
@@ -161,7 +162,7 @@ print("url is==> ${url}");
         );
       } else if (index == correctAnswer) {
         // Correct answer check
-        return Icon(
+        return const Icon(
           Icons.check_circle,
           color: Colors.green,
           size: 22,
@@ -263,12 +264,16 @@ print("url is==> ${url}");
             gravity: 0.1,
             colors: const [Colors.red, Colors.green, Colors.blue, Colors.yellow], // Custom colors
             child: AlertDialog(
-              title: Text('Quiz Completed!'),
+              title: const Text('Quiz Completed!',style: TextStyle(
+                fontSize: 24, fontWeight: FontWeight.w500
+              ),),
               // content: Text('You have finished the quiz.'),
-              content: Column(
+              content: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text('You have finished the quiz.'),
+                  Text('You have finished the quiz.',style: TextStyle(
+                    fontWeight: FontWeight.w400, fontSize: 16
+                  ),),
                 ],
               ),
               actions: [
@@ -296,7 +301,9 @@ print("url is==> ${url}");
                         )),
                       );
                   },
-                  child: Text('Finish'),
+                  child: const Text('Finish',style: TextStyle(
+                    fontSize: 18, fontWeight: FontWeight.w600
+                  ),),
                 ),
               ],
             ),
@@ -311,18 +318,27 @@ print("url is==> ${url}");
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.categoryName}'.toUpperCase(),
-          style: TextStyle(color: Colors.black, fontSize: 20,fontWeight: FontWeight.w400,),
+          style: const TextStyle(color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),
         ),
         automaticallyImplyLeading: false,
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.transparent,
-        iconTheme: IconThemeData(color: Colors.black),
+        titleSpacing: 00.0,
+        toolbarHeight: 60.2,
+        toolbarOpacity: 0.8,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              bottomRight: Radius.circular(25),
+              bottomLeft: Radius.circular(25)),
+        ),
+        backgroundColor: Themer.buttonColor,
+        iconTheme: const IconThemeData(color: Colors.black),
+        systemOverlayStyle: SystemUiOverlayStyle.light,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child:quizData == null || quizData!.data == null || quizData!.data!.isEmpty
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             :Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -332,9 +348,9 @@ print("url is==> ${url}");
               children: [
                 Text(
                   'Question ${currentQuestionIndex + 1}/${quizData!.data!.length}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.bold,
                     color: Colors.orange,
                   ),
                 ),
@@ -342,7 +358,7 @@ print("url is==> ${url}");
                 if (!widget.reviewMode) ...[
                   Text(
                     formatDuration(quizDuration),
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.red,
@@ -352,13 +368,17 @@ print("url is==> ${url}");
                 ],
               ],
             ),
-            SizedBox(height: 15),
+            const SizedBox(height: 12),
+            const Divider(
+              color: Colors.black,
+            ),
+            const SizedBox(height: 12),
             Text(
               //question,
               quizData!.data![currentQuestionIndex].question!,
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Expanded(
               child: ListView.builder(
                 itemCount: quizData!.data![currentQuestionIndex].options!.length,
@@ -368,8 +388,8 @@ print("url is==> ${url}");
                     onTap:
                         () => selectAnswer(index),
                     child: Container(
-                      margin: EdgeInsets.symmetric(vertical: 8),
-                      padding: EdgeInsets.all(15),
+                      margin: const EdgeInsets.symmetric(vertical: 8),
+                      padding: const EdgeInsets.all(15),
                       decoration: BoxDecoration(
                         // color: getColorForOption(index, correctAnswerIndex),
                         color: widget.reviewMode
@@ -380,7 +400,7 @@ print("url is==> ${url}");
                                : Colors.white,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(color: Colors.grey.shade300),
-                        boxShadow: [
+                        boxShadow: const [
                           BoxShadow(
                             color: Colors.black12,
                             spreadRadius: 2,
@@ -420,13 +440,14 @@ print("url is==> ${url}");
                             ):null,
 
                           ),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           Expanded(
                             child: Text(
                              // answers[index],
                               quizData!.data![currentQuestionIndex].options![index],
                               style: TextStyle(
                                 fontSize: 16,
+                                fontWeight: FontWeight.normal,
                                 color: selectedAnswers?[currentQuestionIndex] == index
                                 //selectedAnswerIndex == index
                                     ? Colors.white
@@ -441,7 +462,7 @@ print("url is==> ${url}");
                 },
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -450,17 +471,17 @@ print("url is==> ${url}");
                     width: 150,
                     child: ElevatedButton(
                       onPressed: previousQuestion,
-                      child: Text(
-                        'Previous'.toUpperCase(),
-                        style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500,),
-                      ),
                       style: ElevatedButton.styleFrom(
                        // primary: Colors.grey.shade400,
-                        padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
                         backgroundColor: Themer.selectColor,
+                      ),
+                      child: Text(
+                        'Previous'.toUpperCase(),
+                        style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,),
                       ),
                     ),
                   ),
@@ -469,18 +490,18 @@ print("url is==> ${url}");
                   width: 150,
                   child: ElevatedButton(
                     onPressed:selectedAnswers?[currentQuestionIndex] == null ? null : nextQuestion,
-                    //selectedAnswerIndex == -1 ? null : nextQuestion,
-                    child: Text(
-                      currentQuestionIndex < quizData!.data!.length - 1 ? 'Next'.toUpperCase() : widget.reviewMode ? 'Done'.toUpperCase(): 'Finish'.toUpperCase(),
-                      style: TextStyle(fontSize: 18,fontWeight: FontWeight.w500,),
-                    ),
                     style: ElevatedButton.styleFrom(
                      // primary: Theme.of(context).primaryColor,
-                      padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30),
                       ),
                       backgroundColor: Themer.selectColor,
+                    ),
+                    //selectedAnswerIndex == -1 ? null : nextQuestion,
+                    child: Text(
+                      currentQuestionIndex < quizData!.data!.length - 1 ? 'Next'.toUpperCase() : widget.reviewMode ? 'Done'.toUpperCase(): 'Finish'.toUpperCase(),
+                      style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,),
                     ),
                   ),
                 ),

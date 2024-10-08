@@ -36,8 +36,8 @@ class _ResetPasswordState extends State<ResetPassword> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Success'),
-            content: Text('Password reset successfully'),
+            title: const Text('Success'),
+            content: const Text('Password reset successfully'),
             actions: [
               TextButton(
                 // onPressed: () => Navigator.pop(context),
@@ -47,7 +47,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                     MaterialPageRoute(builder: (context) =>const Login()),
                   );
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           ),
@@ -57,7 +57,7 @@ class _ResetPasswordState extends State<ResetPassword> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Error'),
+            title: const Text('Error'),
             content: Text(responseData['message']),
             actions: [
               TextButton(
@@ -68,7 +68,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                 //     MaterialPageRoute(builder: (context) =>const Login()),
                 //   );
                 // },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           ),

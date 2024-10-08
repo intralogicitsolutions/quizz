@@ -76,17 +76,28 @@ class _QuestionSelectionState extends State<QuestionSelection> {
     return Scaffold(
       appBar: AppBar(
         title: Text('${widget.categoryName}'.toUpperCase(),
-          style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w400),
+          style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.w500),
         ),
         leading: IconButton(
           icon: SvgPicture.asset(
             "assets/images/ios-back-arrow.svg",
-            colorFilter: ColorFilter.mode(Themer.buttonColor, BlendMode.srcIn),
+            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
+        elevation: 0,
+        titleSpacing: 00.0,
+        toolbarHeight: 60.2,
+        toolbarOpacity: 0.8,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              bottomRight: Radius.circular(0),
+              bottomLeft: Radius.circular(0)),
+        ),
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: Themer.buttonColor,
       ),
       body: Center(
         child: Padding(
@@ -96,12 +107,12 @@ class _QuestionSelectionState extends State<QuestionSelection> {
             children: [
               // Difficulty selection container
               Container(
-                padding: EdgeInsets.all(20),
-                margin: EdgeInsets.only(bottom: 30),
+                padding: const EdgeInsets.all(20),
+                margin: const EdgeInsets.only(bottom: 30),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
+                  boxShadow: const [
                     BoxShadow(
                       color: Colors.black12,
                       spreadRadius: 5,
@@ -112,11 +123,11 @@ class _QuestionSelectionState extends State<QuestionSelection> {
                 ),
                 child: Column(
                   children: [
-                    Text(
+                    const Text(
                       'Select Difficulty Level',
                       style: TextStyle(fontSize: 15),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -132,11 +143,11 @@ class _QuestionSelectionState extends State<QuestionSelection> {
               // Display list of exams
               Expanded(
                 child: isLoading
-                    ? Center(child: CircularProgressIndicator())
+                    ? const Center(child: CircularProgressIndicator())
                     : hasError
-                    ? Center(child: Text('Error loading exams'))
+                    ? const Center(child: Text('Error loading exams'))
                     : questionSelectionModel?.data == null || questionSelectionModel!.data!.isEmpty
-                    ? Center(child: Text('No exams available'))
+                    ? const Center(child: Text('No exams available'))
                     : ListView.builder(
                   itemCount: questionSelectionModel!.data!.length,
                   itemBuilder: (context, index) {
@@ -151,7 +162,7 @@ class _QuestionSelectionState extends State<QuestionSelection> {
                             BoxShadow(
                               color: Colors.black.withOpacity(0.1),
                               blurRadius: 5,
-                              offset: Offset(0, 5),
+                              offset: const Offset(0, 5),
                             ),
                           ],
                         ),
@@ -172,7 +183,7 @@ class _QuestionSelectionState extends State<QuestionSelection> {
                               padding: const EdgeInsets.all(8.0),
                               child: Text(exam.examName ?? 'Unknown Exam'),
                             ),
-                            trailing: Icon(Icons.navigate_next),
+                            trailing: const Icon(Icons.navigate_next),
                           ),
                         ),
                       ),
@@ -196,7 +207,7 @@ class _QuestionSelectionState extends State<QuestionSelection> {
         _fetchExamDetails(); // Fetch the exams with the selected difficulty
       },
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
         decoration: BoxDecoration(
           color: selectedDifficulty == difficulty ? Themer.buttonColor : Colors.white,
           borderRadius: BorderRadius.circular(10),

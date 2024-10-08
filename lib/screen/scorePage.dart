@@ -120,7 +120,7 @@ class _ScorePageState extends State<ScorePage> {
   }
 
   Future<bool> updateExamResult(String id, double? score) async {
-    final String apiUrl = 'https://quizz-app-backend-3ywc.onrender.com/exam_result';
+    const String apiUrl = 'https://quizz-app-backend-3ywc.onrender.com/exam_result';
     Map<String, dynamic> body = {
       'score': score,
       'user_id': Global.userId,
@@ -319,13 +319,13 @@ class _ScorePageState extends State<ScorePage> {
                 glowShape: BoxShape.circle,
                 curve: Curves.decelerate,
                 //endRadius: 120.0,
-                duration: Duration(milliseconds: 2000),
+                duration: const Duration(milliseconds: 2000),
                 repeat: false,
                 animate: true,
                 //showTwoGlows: true,
                 child: Material(
                   elevation: 8.0,
-                  shape: CircleBorder(),
+                  shape: const CircleBorder(),
                   child: Container(
                     height: 170,
                     width: 170,
@@ -337,7 +337,7 @@ class _ScorePageState extends State<ScorePage> {
                           color: Colors.white.withOpacity(0.25),
                           spreadRadius: 5,
                           blurRadius: 7,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
@@ -346,7 +346,7 @@ class _ScorePageState extends State<ScorePage> {
                         //crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
+                          const Text(
                             'Your Score',
                             style: TextStyle(
                               fontSize: 25,
@@ -354,11 +354,11 @@ class _ScorePageState extends State<ScorePage> {
                               color: Colors.purple,
                             ),
                           ),
-                          SizedBox(height: 10,),
+                          const SizedBox(height: 10,),
                           Text(
                             // '90%',
                             '${widget.scorePercentage?.toStringAsFixed(0)}%',
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 25,
                               fontWeight: FontWeight.bold,
                               color: Colors.purple,
@@ -370,11 +370,11 @@ class _ScorePageState extends State<ScorePage> {
                   ),
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
 
               // Score Details
               Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(15),
@@ -382,7 +382,7 @@ class _ScorePageState extends State<ScorePage> {
                     BoxShadow(
                       color: Colors.black.withOpacity(0.25),
                       blurRadius: 20,
-                      offset: Offset(5, 5),
+                      offset: const Offset(5, 5),
                     ),
                   ],
                 ),
@@ -391,7 +391,7 @@ class _ScorePageState extends State<ScorePage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
-                        Column(
+                        const Column(
                           children: <Widget>[
                             Text('100%', style: TextStyle(color: Colors.purple)),
                             Text('Completion'),
@@ -400,25 +400,25 @@ class _ScorePageState extends State<ScorePage> {
                         Column(
                           children: <Widget>[
                             Text('${widget.totalQuestions}', style: TextStyle(color: Colors.purple)),
-                            Text('Total Questions'),
+                            const Text('Total Questions'),
                           ],
                         ),
                       ],
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: <Widget>[
                         Column(
                           children: <Widget>[
                             Text('${widget.correctAnswers}', style: TextStyle(color: Colors.green)),
-                            Text('Correct'),
+                            const Text('Correct'),
                           ],
                         ),
                         Column(
                           children: <Widget>[
                             Text('${widget.wrongAnswers}', style: TextStyle(color: Colors.red)),
-                            Text('Wrong'),
+                            const Text('Wrong'),
                           ],
                         ),
                       ],
@@ -426,7 +426,7 @@ class _ScorePageState extends State<ScorePage> {
                   ],
                 ),
               ),
-              SizedBox(height: 40),
+              const SizedBox(height: 40),
 
               // Buttons
               Wrap(
@@ -447,12 +447,12 @@ class _ScorePageState extends State<ScorePage> {
                         if (isUpdated) {
                           // Show a success message
                           ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Score updated successfully'))
+                              const SnackBar(content: Text('Score updated successfully'))
                           );
                         } else {
                           // Show an error message
                           ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Failed to update score'))
+                              const SnackBar(content: Text('Failed to update score'))
                           );
                         }
                       }
@@ -501,16 +501,16 @@ class _ScorePageState extends State<ScorePage> {
           onPressed: onPressed,
           elevation: 2.0,
           fillColor: color,
+          padding: const EdgeInsets.all(15.0),
+          shape: const CircleBorder(),
           child: Icon(
            icon,
             size: 30.0,
               color: Colors.white
           ),
-          padding: EdgeInsets.all(15.0),
-          shape: CircleBorder(),
         ),
-        SizedBox(height: 5),
-        Text(label, style: TextStyle(color: Colors.black)),
+        const SizedBox(height: 5),
+        Text(label, style: const TextStyle(color: Colors.black)),
       ],
     );
   }

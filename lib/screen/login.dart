@@ -48,12 +48,12 @@ class _LoginState extends State<Login> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                 SizedBox(height: 30),
+                 const SizedBox(height: 30),
                   Image.asset("assets/images/quiz_logo1.png",height: 130),
                   //SizedBox(height: 30),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
                   LoginForm(isLogin: isLogin),
-                 SizedBox(height: 20),
+                 const SizedBox(height: 20),
                   GestureDetector(
                     onTap: () {
                       setState(() {
@@ -64,7 +64,7 @@ class _LoginState extends State<Login> {
                       isLogin
                           ? "Don't have an account? Sign up"
                           : "Already have an account? Login",
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.purple,
                         fontSize: 16,
                         decoration: TextDecoration.underline,
@@ -84,7 +84,7 @@ class _LoginState extends State<Login> {
 class LoginForm extends StatefulWidget {
   final bool isLogin;
 
-  LoginForm({required this.isLogin});
+  const LoginForm({required this.isLogin});
 
   @override
   State<LoginForm> createState() => _LoginFormState();
@@ -127,12 +127,12 @@ class _LoginFormState extends State<LoginForm> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Signup Error'),
+            title: const Text('Signup Error'),
             content: Text(responseData['message']),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           ),
@@ -179,12 +179,12 @@ class _LoginFormState extends State<LoginForm> {
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
-            title: Text('Login Error'),
+            title: const Text('Login Error'),
             content: Text(responseData['message']),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           ),
@@ -206,7 +206,7 @@ class _LoginFormState extends State<LoginForm> {
           controller: _firstNameController,
           decoration: InputDecoration(
             labelText: 'First name',
-            prefixIcon: Icon(Icons.person),
+            prefixIcon: const Icon(Icons.person),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30),
             ),
@@ -215,14 +215,14 @@ class _LoginFormState extends State<LoginForm> {
           ),
         ),
         if (!widget.isLogin)
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
         //if (!widget.isLogin)
         if (!widget.isLogin)
           TextField(
             controller: _lastNameController,
             decoration: InputDecoration(
               labelText: 'Last name',
-              prefixIcon: Icon(Icons.person),
+              prefixIcon: const Icon(Icons.person),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
@@ -231,12 +231,12 @@ class _LoginFormState extends State<LoginForm> {
             ),
           ),
         if (!widget.isLogin)
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           TextField(
             controller: _emailController,
             decoration: InputDecoration(
               labelText: 'Email',
-              prefixIcon: Icon(Icons.email),
+              prefixIcon: const Icon(Icons.email),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30),
               ),
@@ -244,7 +244,7 @@ class _LoginFormState extends State<LoginForm> {
               fillColor: Colors.grey.shade100,
             ),
           ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         TextField(
           controller: _passwordController,
           obscureText: !isPasswordVisible,
@@ -275,7 +275,7 @@ class _LoginFormState extends State<LoginForm> {
                 MaterialPageRoute(builder: (context) => const ForgotPassword()),
               );
             },
-            child: Text(
+            child: const Text(
               'Forgot Password?',
               style: TextStyle(
                 color: Colors.purple,
@@ -300,11 +300,6 @@ class _LoginFormState extends State<LoginForm> {
               // );
               // Handle login/signup logic
             },
-            child: Text(widget.isLogin ? 'LOGIN' : 'SIGN UP',
-            style: TextStyle(
-              color: Themer.Text2Color,
-              fontWeight: FontWeight.bold,
-            ),),
             style: ElevatedButton.styleFrom(
               backgroundColor: Themer.selectColor,
               padding: EdgeInsets.symmetric(vertical: 15),
@@ -312,6 +307,11 @@ class _LoginFormState extends State<LoginForm> {
                 borderRadius: BorderRadius.circular(30),
               ),
             ),
+            child: Text(widget.isLogin ? 'LOGIN' : 'SIGN UP',
+            style: const TextStyle(
+              color: Themer.Text2Color,
+              fontWeight: FontWeight.bold,
+            ),),
           ),
         ),
       ],

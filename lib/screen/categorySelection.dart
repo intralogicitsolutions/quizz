@@ -73,27 +73,37 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('category'.toUpperCase(),
-          style: TextStyle(color: Colors.black, fontSize: 20,fontWeight: FontWeight.w400,),),
+          style: const TextStyle(color: Colors.white, fontSize: 20,fontWeight: FontWeight.w500,),),
         centerTitle: false,
         leading: IconButton(
           icon: SvgPicture.asset(
             "assets/images/ios-back-arrow.svg",
             // color: Colors.blue,
-            colorFilter: ColorFilter.mode(Themer.buttonColor, BlendMode.srcIn),
+            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
+        elevation: 0,
+        titleSpacing: 00.0,
+        toolbarHeight: 60.2,
+        toolbarOpacity: 0.8,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              bottomRight: Radius.circular(0),
+              bottomLeft: Radius.circular(0)),
+        ),
+        backgroundColor: Themer.buttonColor,
       ),
-      body: isLoading? Center(child: CircularProgressIndicator())
+      body: isLoading? const Center(child: CircularProgressIndicator())
           :Column(
         children: [
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: 16.0,
                   mainAxisSpacing: 16.0,
@@ -119,7 +129,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                           BoxShadow(
                             color: Colors.black.withOpacity(0.1),
                             blurRadius: 6,
-                            offset: Offset(0, 3),
+                            offset: const Offset(0, 3),
                           ),
                         ],
                       ),
@@ -132,7 +142,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                             size: 40,
                             color: Colors.purple[800],
                           ),
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Text(
                             category.name ?? '',
                             style: TextStyle(
@@ -176,7 +186,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
                 ),
                 child: Text(
                   'Continue'.toUpperCase(),
-                  style: TextStyle(fontSize: 18, color: Colors.white,fontWeight: FontWeight.w500,),
+                  style: const TextStyle(fontSize: 18, color: Colors.white,fontWeight: FontWeight.w500,),
                 ),
               ),
             ),

@@ -69,13 +69,13 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     return Scaffold(
       appBar: AppBar(
           title: Text('Forgot Password'.toUpperCase(),
-            style: TextStyle(color: Colors.black, fontSize: 20,fontWeight: FontWeight.w400,),),
+            style: const TextStyle(color: Colors.black, fontSize: 20,fontWeight: FontWeight.w400,),),
         centerTitle: false,
         leading: IconButton(
           icon: SvgPicture.asset(
             "assets/images/ios-back-arrow.svg",
             // color: Colors.blue,
-            colorFilter: ColorFilter.mode(Themer.buttonColor, BlendMode.srcIn),
+            colorFilter: const ColorFilter.mode(Themer.buttonColor, BlendMode.srcIn),
           ),
           onPressed: () {
             Navigator.pop(context);
@@ -91,7 +91,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 controller: _emailController,
                 decoration: InputDecoration(
                   labelText: 'Email',
-                  prefixIcon: Icon(Icons.email),
+                  prefixIcon: const Icon(Icons.email),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
@@ -99,22 +99,22 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   fillColor: Colors.grey.shade100,
                 ),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: handleForgotPassword,
-                  child: Text('Reset Password',
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.purple,
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  child: const Text('Reset Password',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple,
-                    padding: EdgeInsets.symmetric(vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30),
                     ),
                   ),
                 ),

@@ -15,7 +15,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     // Simulate a loading time
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () {
       // Navigate to the next screen after 3 seconds
       //Navigator.pushReplacementNamed(context, '/home');
       Navigator.of(context, rootNavigator:

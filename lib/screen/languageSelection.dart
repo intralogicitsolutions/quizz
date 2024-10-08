@@ -19,12 +19,6 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
   bool _isLoading = true;
   List<String> _languages = [];
   LanguageModel? languageModel;
-  // final List<String> _languages = [
-  //   'English',
-  //   'Hindi',
-  //   'Gujarati',
-  //   'Marathi',
-  // ];
 
   @override
   void initState() {
@@ -35,11 +29,8 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
 
   Future<void> fetchLanguages() async {
     Global.get("language", {}).then((response) {
-      //final data = jsonDecode(response.body);
        languageModel = LanguageModel.fromJson(jsonDecode(response.body));
       setState(() {
-        // _languages = List<String>.from(
-        //     data['data'].map((lang) => lang['name'])); // Extract language names
         _languages = languageModel!.data?.map((lang) => lang.name!).toList() ?? [];
         _selectedLanguageId = languageModel!.data?.first.sId;
         _selectedLanguage = _languages.isNotEmpty
@@ -50,53 +41,31 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
     }).catchError((error) {
       print('Error: $error');
     });
-    // final url = 'https://quizz-app-backend-3ywc.onrender.com/language';
-    // try {
-    //   final response = await http.get(Uri.parse(url),
-    //     headers: {'Content-Type': 'application/json',
-    //       "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NmVkMDczZWQxNjI4OGIxMzBiMjczODgiLCJmaXJzdF9uYW1lIjoiSXNoaXRhICIsImxhc3RfbmFtZSI6InBvc2hpeWEgIiwiZW1haWxfaWQiOiJpc2hpdGFwb3NoaXlhMTgxMUBnbWFpbC5jb20iLCJfX3YiOjAsImlhdCI6MTcyNzA2Nzc3MiwiZXhwIjoxNzI3MDk2NTcyfQ.RHEZqv09mMTeivLoZQXPbocg09BF8Jtl0RwdwIggqAY"
-    //     },
-    //   );
-    //   if (response.statusCode == 200) {
-    //     final data = jsonDecode(response.body);
-    //     print('response2 ===> ${response.body}');
-    //     setState(() {
-    //       _languages = List<String>.from(data['data'].map((lang) => lang['name'])); // Extract language names
-    //       _selectedLanguage = _languages.isNotEmpty ? _languages[0] : null; // Set the first language as default
-    //       _isLoading = false;
-    //     });
-    //   } else {
-    //     print('Failed to load languages');
-    //   }
-    // } catch (e) {
-    //   print('Error: $e');
-    // }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
         elevation: 0,
-        // leading: IconButton(
-        //   icon: SvgPicture.asset(
-        //     "assets/images/ios-back-arrow.svg",
-        //     // color: Colors.blue,
-        //     colorFilter: ColorFilter.mode(Themer.buttonColor, BlendMode.srcIn),
-        //   ),
-        //   onPressed: () {
-        //     Navigator.pop(context);
-        //   },
-        // ),
         title: Padding(
           padding: const EdgeInsets.only(left: 30),
           child: Text(
             'Languages'.toUpperCase(),
-            style: TextStyle(color: Colors.black, fontSize: 20,fontWeight: FontWeight.w400,),
+            style: const TextStyle(color: Colors.white, fontSize: 20,fontWeight: FontWeight.w500,),
           ),
         ),
         centerTitle: false,
+        titleSpacing: 00.0,
+        toolbarHeight: 60.2,
+        toolbarOpacity: 0.8,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              bottomRight: Radius.circular(0),
+              bottomLeft: Radius.circular(0)),
+        ),
+        backgroundColor: Themer.buttonColor,
+
       ),
       body: _isLoading ? const Center(child: CircularProgressIndicator()) :Padding(
         padding: const EdgeInsets.all(16.0),
@@ -104,7 +73,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Selected Language Section
-            Text(
+            const Text(
               'Selected Language',
               style: TextStyle(
                 fontSize: 18,
@@ -186,7 +155,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [
                       Themer.buttonColor, // First color in the gradient
                         Themer.button2TextColor// Second color in the gradient
