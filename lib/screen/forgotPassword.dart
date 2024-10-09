@@ -26,14 +26,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         body: jsonEncode({'email_id': _emailController.text}),
       );
 
-      print('Full Response: ${response.body}');
-
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        print('response ${response.body}');
-
         final String? resetToken = responseData['resetToken'];
-        print('reset token : ${resetToken}');
         if(resetToken != null) {
           Navigator.push(
             context,
@@ -69,18 +64,27 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     return Scaffold(
       appBar: AppBar(
           title: Text('Forgot Password'.toUpperCase(),
-            style: const TextStyle(color: Colors.black, fontSize: 20,fontWeight: FontWeight.w400,),),
-        centerTitle: false,
+            style: const TextStyle(color: Colors.white, fontSize: 20,fontWeight: FontWeight.w500,),),
         leading: IconButton(
           icon: SvgPicture.asset(
             "assets/images/ios-back-arrow.svg",
             // color: Colors.blue,
-            colorFilter: const ColorFilter.mode(Themer.buttonColor, BlendMode.srcIn),
+            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
+        centerTitle: true,
+        titleSpacing: 00.0,
+        toolbarHeight: 60.2,
+        toolbarOpacity: 0.8,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              bottomRight: Radius.circular(25),
+              bottomLeft: Radius.circular(25)),
+        ),
+        backgroundColor: Themer.buttonColor,
           ),
       body: Center(
         child: Padding(
@@ -105,7 +109,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 child: ElevatedButton(
                   onPressed: handleForgotPassword,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple,
+                    backgroundColor: Themer.buttonColor,
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),

@@ -28,41 +28,41 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
   }
 
   Future<void> fetchLanguages() async {
-    Global.get("language", {}).then((response) {
-       languageModel = LanguageModel.fromJson(jsonDecode(response.body));
+    try {
+      final response = await Global.get("language", {});
+      if (!mounted) return;
+
+      languageModel = LanguageModel.fromJson(jsonDecode(response.body));
       setState(() {
         _languages = languageModel!.data?.map((lang) => lang.name!).toList() ?? [];
         _selectedLanguageId = languageModel!.data?.first.sId;
-        _selectedLanguage = _languages.isNotEmpty
-            ? _languages[0]
-            : null; // Set the first language as default
+        _selectedLanguage = _languages.isNotEmpty ? _languages[0] : null; // Set the first language as default
         _isLoading = false;
       });
-    }).catchError((error) {
+    } catch (error) {
+      if (!mounted) return; // Check again in case of error
       print('Error: $error');
-    });
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: Padding(
-          padding: const EdgeInsets.only(left: 30),
-          child: Text(
-            'Languages'.toUpperCase(),
-            style: const TextStyle(color: Colors.white, fontSize: 20,fontWeight: FontWeight.w500,),
-          ),
+        title: Text(
+          'Languages'.toUpperCase(),
+          style: const TextStyle(color: Colors.white, fontSize: 20,fontWeight: FontWeight.w500,),
         ),
-        centerTitle: false,
+        centerTitle: true,
         titleSpacing: 00.0,
         toolbarHeight: 60.2,
         toolbarOpacity: 0.8,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-              bottomRight: Radius.circular(0),
-              bottomLeft: Radius.circular(0)),
+              bottomRight: Radius.circular(25),
+              bottomLeft: Radius.circular(25)),
         ),
         backgroundColor: Themer.buttonColor,
 

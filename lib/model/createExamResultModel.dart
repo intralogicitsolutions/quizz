@@ -32,7 +32,8 @@ class Data {
     sId = json['_id'];
     userId = json['user_id'];
     examId = json['exam_id'];
-    score = json['score'];
+    // score = json['score'];
+    score = json['score'] is int ? (json['score'] as int).toDouble() : json['score'];
     if (json['result'] != null) {
       result = <Result>[];
       json['result'].forEach((v) {

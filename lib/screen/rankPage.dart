@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:quiz/model/createRankModel.dart';
 import 'package:quiz/theme/theme.dart';
-import '../model/rankModel.dart';
 
 class RankPage extends StatefulWidget {
   final int? rank;
@@ -14,9 +12,6 @@ class RankPage extends StatefulWidget {
 }
 
 class _RankPageState extends State<RankPage> {
-  RankModel? rankModel;
-  CreateRankModel? createRankModel;
-  // bool isLoading = true;
 
   @override
 
@@ -24,25 +19,32 @@ class _RankPageState extends State<RankPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Rank'),
+        title: const Text('Rank',
+          style: TextStyle(color: Colors.white, fontSize: 20,fontWeight: FontWeight.w500,),
+        ),
         leading: IconButton(
           icon: SvgPicture.asset(
             "assets/images/ios-back-arrow.svg",
-            colorFilter: ColorFilter.mode(Themer.buttonColor, BlendMode.srcIn),
+            colorFilter: const ColorFilter.mode(Colors.white, BlendMode.srcIn),
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        centerTitle: false,
+        centerTitle: true,
+        elevation: 0,
+        titleSpacing: 00.0,
+        toolbarHeight: 60.2,
+        toolbarOpacity: 0.8,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              bottomRight: Radius.circular(25),
+              bottomLeft: Radius.circular(25)),
+        ),
+        backgroundColor: Themer.buttonColor,
       ),
       body:
-      // isLoading
-      //     ? Center(child: CircularProgressIndicator())
-      //     : rankModel != null
-      //     ?
       buildRankContent()
-          // : Center(child: Text('Failed to load data')),
     );
   }
 
@@ -56,8 +58,10 @@ class _RankPageState extends State<RankPage> {
             children: [
               Image.asset("assets/images/winnercup2.png"),
               Positioned(
-                top: 135,
-                left: 130,
+                // top: 135,
+                // left: 130,
+                top: MediaQuery.of(context).size.height * 0.175,
+                left: MediaQuery.of(context).size.width * 0.365,
                 child: Text(
                   widget.rank != null ? 'Rank ${widget.rank}' : '', // Display the fetched rank
                   style: const TextStyle(fontSize: 20, color: Colors.white),

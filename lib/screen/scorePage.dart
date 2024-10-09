@@ -4,7 +4,6 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:quiz/model/createExamResultModel.dart';
-import 'package:quiz/model/scoreModel.dart';
 import 'package:quiz/screen/quizPage.dart';
 import 'package:quiz/screen/rankPage.dart';
 import 'package:quiz/theme/theme.dart';
@@ -34,7 +33,6 @@ class ScorePage extends StatefulWidget {
 }
 
 class _ScorePageState extends State<ScorePage> {
-  ScoreModel? scoreModel;
   //bool isLoading = true;
   String? scoreId;
   String? userId = Global.userId;
@@ -46,7 +44,6 @@ class _ScorePageState extends State<ScorePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    //fetchScoreData();
     getExamResult();
   }
 
@@ -191,120 +188,13 @@ class _ScorePageState extends State<ScorePage> {
     }
   }
 
-
-  // Future<void> fetchScoreData() async {
-  //   String? userId = Global.userId;
-  //   if (userId == null) {
-  //     print('User ID is not available');
-  //     return;
-  //   }
-  //
-  //  // await storeScore(userId, widget.examId, widget.scorePercentage);
-  //   final url = 'https://quizz-app-backend-3ywc.onrender.com/score_detail?exam_id=${widget.examId}&user_id=$userId&score=${widget.scorePercentage}';
-  //   try {
-  //     final response = await http.get(Uri.parse(url),
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': "Bearer ${Global.token}"
-  //       },
-  //     );
-  //     print("url is==> $url");
-  //     print("status code is ===> ${response.statusCode}");
-  //     if (response.statusCode == 200) {
-  //       final responseData = json.decode(response.body);
-  //       final data = responseData['data'];
-  //       //final data1 = json.decode(response.body)['data'];
-  //       if (data != null && data.isNotEmpty) {
-  //         String existingScoreId = data[0]['_id'];
-  //         // Score already exists for this exam and user, update the score
-  //         scoreModel = ScoreModel.fromJson(data[0]);
-  //         await updateScore(existingScoreId, widget.scorePercentage);
-  //         print('data of id is ==> ${existingScoreId}');
-  //       } else {
-  //         // Score doesn't exist, store a new score
-  //         await storeScore(userId, widget.examId, widget.scorePercentage);
-  //       }
-  //       setState(() {
-  //         scoreModel = ScoreModel.fromJson(json.decode(response.body)['data'][0]);
-  //         print(response.body);
-  //         scoreId = data[0]['_id'];
-  //         isLoading = false; // Data has been loaded
-  //       });
-  //       print('scoreId : ${scoreId}');
-  //     } else {
-  //       setState(() {
-  //         isLoading = false;  // Stop loading even if there's an error
-  //       });
-  //       // Handle non-200 status codes (errors)
-  //       print('Failed to load data: ${response.statusCode}');
-  //     }
-  //   } catch (e) {
-  //     setState(() {
-  //       isLoading = false;  // Stop loading on error
-  //     });
-  //     print('Error fetching data: $e');
-  //   }
-  // }
-
-  // Future<void> storeScore(String userId, String? examId, double? score) async {
-  //   final String apiUrl = 'https://quizz-app-backend-3ywc.onrender.com/score_detail';
-  //
-  //   try {
-  //     final response = await http.post(
-  //             Uri.parse(apiUrl),
-  //             headers: {
-  //               'Content-Type': 'application/json',
-  //               'Authorization': "Bearer ${Global.token}"
-  //             },
-  //             body: json.encode({
-  //               'user_id': userId,
-  //               'exam_id': examId,
-  //               'score': score,
-  //             }),
-  //           );
-  //     if (response.statusCode == 200) {
-  //             print('Score stored successfully: ${response.body}');
-  //           } else {
-  //             print('Failed to store score: ${response.body}');
-  //           }
-  //   }catch(e){
-  //     print('Error storing score: $e');
-  //   }
-  // }
-
-  // Future<void> updateScore(String id, double? score) async{
-  //   final String apiUrl = 'https://quizz-app-backend-3ywc.onrender.com/score_detail?_id=${id}';
-  //   try {
-  //     final response = await http.put(
-  //       Uri.parse(apiUrl),
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': "Bearer ${Global.token}"
-  //       },
-  //       body: json.encode({
-  //         '_id': id,
-  //         'score': score,
-  //       }),
-  //     );
-  //     if (response.statusCode == 200) {
-  //       print('Score update successfully: ${response.body}');
-  //     } else {
-  //       print('Failed to update score: ${response.body}');
-  //     }
-  //   }catch(e){
-  //     print('Error updating score: $e');
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.purple[50],
+
       backgroundColor: Themer.buttonTextColor,
       body:
-      // isLoading
-      //   ? Center(child: CircularProgressIndicator())
-      // :
+
       Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -357,7 +247,7 @@ class _ScorePageState extends State<ScorePage> {
                           const SizedBox(height: 10,),
                           Text(
                             // '90%',
-                            '${widget.scorePercentage?.toStringAsFixed(0)}%',
+                            '${widget.scorePercentage?.toStringAsFixed(2) ?? '0.00'}%',
                             style: const TextStyle(
                               fontSize: 25,
                               fontWeight: FontWeight.bold,
@@ -481,9 +371,6 @@ class _ScorePageState extends State<ScorePage> {
                         );
                       }
                   ),
-                  // buildIconButton(Icons.picture_as_pdf, 'Generate PDF'),
-                  // buildIconButton(Icons.home, 'Home'),
-                  // buildIconButton(Icons.leaderboard, 'Leaderboard'),
                 ],
               ),
             ],

@@ -1,7 +1,6 @@
-import 'dart:async'; // Import for Timer class
+import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
-import 'package:confetti/confetti.dart';
+// import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -33,7 +32,7 @@ class _QuizPageState extends State<QuizPage> {
   Duration quizDuration = const Duration(minutes: 10); // 30-minute timer
   quizModel.QuizModel? quizData;
   bool? isLoading;
-  late ConfettiController confettiController;
+  // late ConfettiController confettiController;
 
   _QuizPageState() : selectedAnswers = [];
 
@@ -41,19 +40,17 @@ class _QuizPageState extends State<QuizPage> {
   void initState() {
     super.initState();
     selectedAnswers = widget.selectedAnswers ?? List<int?>.filled(quizData?.data?.length ?? 10, null); // Initialize with selected answers or default values
-    confettiController = ConfettiController(duration: const Duration(seconds: 1));
+    // confettiController = ConfettiController(duration: const Duration(seconds: 1));
     if (!widget.reviewMode) {
       startTimer();
     }
     fetchQuizData();
-    print('selcet answer====> ${selectedAnswers}');
-    //Start the timer when the quiz page loads
   }
 
   @override
   void dispose() {
     countdownTimer?.cancel();
-    confettiController.dispose();// Cancel the timer when the widget is disposed
+    // confettiController.dispose();// Cancel the timer when the widget is disposed
     super.dispose();
   }
 
@@ -169,7 +166,6 @@ print("url is==> ${url}");
         );
       }
     }
-    // Default icon when no selection is made
     return Icon(null); // Or another default color
   }
 
@@ -189,11 +185,9 @@ print("url is==> ${url}");
       if (currentQuestionIndex < quizData!.data!.length - 1) {
         currentQuestionIndex++;
         if (!widget.reviewMode) {
-         // selectedAnswerIndex = -1;
           selectedAnswerIndex = selectedAnswers![currentQuestionIndex] ?? -1;
         }
       } else {
-        // Quiz finished logic
         widget.reviewMode ? finishQuizReview()
        : finishQuiz();
       }
@@ -205,8 +199,6 @@ print("url is==> ${url}");
     setState(() {
       if (currentQuestionIndex > 0) {
         currentQuestionIndex--;
-        // selectedAnswerIndex = -1; // Reset the answer when going back
-        // selectedAnswerIndex = selectedAnswers![currentQuestionIndex] ?? -1;
       }
     });
   }
@@ -250,22 +242,23 @@ print("url is==> ${url}");
     int wrongAnswers = totalQuestions - correctAnswers;
     double scorePercentage = (correctAnswers / totalQuestions) * 100;
     countdownTimer?.cancel(); // Stop the timer when the quiz finishes
-    confettiController.play();
+    // confettiController.play();
     showDialog(
       context: context,
       builder: (_) => Stack(
         children: [
-          ConfettiWidget(
-            confettiController: confettiController,
-           blastDirection: pi / 2, // Direction of the confetti
-            emissionFrequency: 0.2,
-            numberOfParticles: 20,
-            blastDirectionality: BlastDirectionality.explosive,
-            gravity: 0.1,
-            colors: const [Colors.red, Colors.green, Colors.blue, Colors.yellow], // Custom colors
-            child: AlertDialog(
+          //ConfettiWidget(
+           //  confettiController: confettiController,
+           // blastDirection: pi / 2, // Direction of the confetti
+           //  emissionFrequency: 0.2,
+           //  numberOfParticles: 20,
+           //  blastDirectionality: BlastDirectionality.explosive,
+           //  gravity: 0.1,
+           //  colors: const [Colors.red, Colors.green, Colors.blue, Colors.yellow], // Custom colors
+            //child:
+            AlertDialog(
               title: const Text('Quiz Completed!',style: TextStyle(
-                fontSize: 24, fontWeight: FontWeight.w500
+                fontSize: 22, fontWeight: FontWeight.w500
               ),),
               // content: Text('You have finished the quiz.'),
               content: const Column(
@@ -279,11 +272,8 @@ print("url is==> ${url}");
               actions: [
                 TextButton(
                   onPressed: () {
-                    confettiController.stop();
-                    print('selectd answer is --> ${selectedAnswers}');
-                    print('selectd answer from widget --> ${widget.selectedAnswers}');
-                    print('question id list ----> ${quizData!.data!.map((e) => e.sId!).toList()}');
-                    print('selected answer ----> ${selectedAnswers}');
+                    // confettiController.stop();
+
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => ScorePage(
@@ -307,7 +297,7 @@ print("url is==> ${url}");
                 ),
               ],
             ),
-          ),
+         // ),
         ],
       ),
     );
@@ -376,7 +366,7 @@ print("url is==> ${url}");
             Text(
               //question,
               quizData!.data![currentQuestionIndex].question!,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
             ),
             const SizedBox(height: 20),
             Expanded(
@@ -391,11 +381,9 @@ print("url is==> ${url}");
                       margin: const EdgeInsets.symmetric(vertical: 8),
                       padding: const EdgeInsets.all(15),
                       decoration: BoxDecoration(
-                        // color: getColorForOption(index, correctAnswerIndex),
                         color: widget.reviewMode
                             ? getColorForOption(index, correctAnswerIndex)
                             :selectedAnswers?[currentQuestionIndex] == index
-                        //selectedAnswerIndex == index
                                ? Theme.of(context).primaryColor.withOpacity(0.7)
                                : Colors.white,
                         borderRadius: BorderRadius.circular(10),
@@ -419,14 +407,12 @@ print("url is==> ${url}");
                                 color: widget.reviewMode
                                 ? Colors.white
                                 : selectedAnswers?[currentQuestionIndex] == index
-                                //selectedAnswerIndex == index
                                     ? Colors.white
                                     : Colors.grey.shade400,
                               ),
                               color: widget.reviewMode
                               ? Colors.white
                               : selectedAnswers?[currentQuestionIndex] == index
-                              //selectedAnswerIndex == index
                                   ? Colors.white
                                   : Colors.transparent,
                             ),
@@ -472,7 +458,6 @@ print("url is==> ${url}");
                     child: ElevatedButton(
                       onPressed: previousQuestion,
                       style: ElevatedButton.styleFrom(
-                       // primary: Colors.grey.shade400,
                         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -498,7 +483,6 @@ print("url is==> ${url}");
                       ),
                       backgroundColor: Themer.selectColor,
                     ),
-                    //selectedAnswerIndex == -1 ? null : nextQuestion,
                     child: Text(
                       currentQuestionIndex < quizData!.data!.length - 1 ? 'Next'.toUpperCase() : widget.reviewMode ? 'Done'.toUpperCase(): 'Finish'.toUpperCase(),
                       style: const TextStyle(fontSize: 18,fontWeight: FontWeight.w500,),

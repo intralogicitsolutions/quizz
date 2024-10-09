@@ -62,12 +62,6 @@ class _ResetPasswordState extends State<ResetPassword> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                // onPressed: () {
-                //   Navigator.push(
-                //     context,
-                //     MaterialPageRoute(builder: (context) =>const Login()),
-                //   );
-                // },
                 child: const Text('OK'),
               ),
             ],
@@ -83,18 +77,26 @@ class _ResetPasswordState extends State<ResetPassword> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Reset Password'.toUpperCase(),
-        style: TextStyle(color: Colors.black, fontSize: 20,fontWeight: FontWeight.w400,),),
-        centerTitle: false,
+        style: TextStyle(color: Colors.white, fontSize: 20,fontWeight: FontWeight.w500,),),
+        centerTitle: true,
         leading: IconButton(
           icon: SvgPicture.asset(
             "assets/images/ios-back-arrow.svg",
-            // color: Colors.blue,
-            colorFilter: ColorFilter.mode(Themer.buttonColor, BlendMode.srcIn),
+            colorFilter: ColorFilter.mode(Colors.white, BlendMode.srcIn),
           ),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
+        titleSpacing: 00.0,
+        toolbarHeight: 60.2,
+        toolbarOpacity: 0.8,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              bottomRight: Radius.circular(25),
+              bottomLeft: Radius.circular(25)),
+        ),
+        backgroundColor: Themer.buttonColor,
       ),
       body: Center(
         child: Padding(
@@ -125,7 +127,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.purple,
+                    backgroundColor: Themer.buttonColor,
                     padding: EdgeInsets.symmetric(vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30),

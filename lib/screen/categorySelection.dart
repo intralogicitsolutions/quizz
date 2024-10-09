@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -74,7 +73,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
       appBar: AppBar(
         title: Text('category'.toUpperCase(),
           style: const TextStyle(color: Colors.white, fontSize: 20,fontWeight: FontWeight.w500,),),
-        centerTitle: false,
+        centerTitle: true,
         leading: IconButton(
           icon: SvgPicture.asset(
             "assets/images/ios-back-arrow.svg",
@@ -91,8 +90,8 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
         toolbarOpacity: 0.8,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-              bottomRight: Radius.circular(0),
-              bottomLeft: Radius.circular(0)),
+              bottomRight: Radius.circular(25),
+              bottomLeft: Radius.circular(25)),
         ),
         backgroundColor: Themer.buttonColor,
       ),

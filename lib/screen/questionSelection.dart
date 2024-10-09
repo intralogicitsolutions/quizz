@@ -48,8 +48,6 @@ class _QuestionSelectionState extends State<QuestionSelection> {
           'Authorization': "Bearer ${Global.token}"
         },
       );
-      print("quiz data response ===> ${response.statusCode}");
-      print("url is==> $url");
 
       if (response.statusCode == 200) {
         final jsonData = json.decode(response.body);
@@ -87,14 +85,15 @@ class _QuestionSelectionState extends State<QuestionSelection> {
             Navigator.pop(context);
           },
         ),
+        centerTitle: true,
         elevation: 0,
         titleSpacing: 00.0,
         toolbarHeight: 60.2,
         toolbarOpacity: 0.8,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-              bottomRight: Radius.circular(0),
-              bottomLeft: Radius.circular(0)),
+              bottomRight: Radius.circular(25),
+              bottomLeft: Radius.circular(25)),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
         backgroundColor: Themer.buttonColor,
