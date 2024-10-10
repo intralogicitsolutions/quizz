@@ -40,6 +40,7 @@ dependencies:
   shared_preferences: ^2.3.2
 #  confetti: ^0.7.0
   avatar_glow: ^3.0.1
+  awesome_dialog: ^3.2.1
 
 dev_dependencies:
   flutter_test:
@@ -58,6 +59,7 @@ flutter:
 
   assets:
     - assets/images/
+    - assets/icon/
 
 
   fonts:

@@ -8,6 +8,7 @@ class Global{
 
  static var BASE_URL ="https://quizz-app-backend-3ywc.onrender.com/";
 
+
  static Future<http.Response> get(String url, Map<String, String> query) async{
    var client = http.Client();
    var tmp_url = BASE_URL + url + Uri.https("", "", query).query;

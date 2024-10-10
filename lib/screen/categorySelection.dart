@@ -5,6 +5,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:quiz/screen/questionSelection.dart';
 import 'package:quiz/theme/theme.dart';
 import '../global/global.dart';
+import 'package:http/http.dart' as http;
+import '../global/tokenStorage.dart';
 import '../model/categoryModel.dart';
 
 class CategorySelectionPage extends StatefulWidget {
@@ -30,16 +32,48 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
   }
 
   Future<void> fetchCategory() async{
-    Global.get("category", {}).then((response) {
-      final jsonResponse = jsonDecode(response.body);
-   //  CategoryModel categoryModel = CategoryModel.fromJson(jsonResponse);
-      setState(() {
-        _categories = (jsonResponse['data'] as List).map((item) => Data.fromJson(item)).toList();
-        isLoading = false;
-      });
-    }).catchError((error) {
-      print('Error: $error');
-    });
+    String? token = await TokenStorage.getToken();
+
+    if (token == null) {
+      print('Token is null');
+      return;
+    }
+
+    final url = "https://quizz-app-backend-3ywc.onrender.com/category";
+    try{
+      final response = await http.get(Uri.parse(url),
+          headers: {'Content-Type': 'application/json',
+            "Authorization": "Bearer $token"
+          });
+          if (response.statusCode == 200) {
+            // final data = jsonDecode(response.body);
+            final jsonResponse = jsonDecode(response.body);
+            // CategoryModel categoryModel = CategoryModel.fromJson(jsonResponse(response.body));
+            setState(() {
+              // _categories = List<Map<String, dynamic>>.from(data['data'].map((category) => {
+              //   'icon': category['icon'],
+              //   'label': category['name'],
+              // }));
+              _categories = (jsonResponse['data'] as List).map((item) => Data.fromJson(item)).toList();
+              isLoading = false;
+            });
+          }
+          else{
+            throw Exception('Failed to load categories');
+          }
+    }catch(e){
+      print('Error: $e');
+    }
+   //  Global.get("category", {}).then((response) {
+   //    final jsonResponse = jsonDecode(response.body);
+   // //  CategoryModel categoryModel = CategoryModel.fromJson(jsonResponse);
+   //    setState(() {
+   //      _categories = (jsonResponse['data'] as List).map((item) => Data.fromJson(item)).toList();
+   //      isLoading = false;
+   //    });
+   //  }).catchError((error) {
+   //    print('Error: $error');
+   //  });
   }
 
   IconData _getIconData(String iconName) {

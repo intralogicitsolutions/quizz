@@ -1,14 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 // import 'package:confetti/confetti.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:quiz/global/global.dart';
 import 'package:quiz/model/quizModel.dart' as quizModel;
 import 'package:quiz/screen/scorePage.dart';
 import 'package:quiz/theme/theme.dart';
 import 'package:http/http.dart' as http;
+
+import '../global/tokenStorage.dart';
 
 
 class QuizPage extends StatefulWidget {
@@ -24,7 +26,9 @@ class QuizPage extends StatefulWidget {
   _QuizPageState createState() => _QuizPageState();
 }
 
-class _QuizPageState extends State<QuizPage> {
+class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
+  late AnimationController _controller;
+
   int currentQuestionIndex = 0;
   int selectedAnswerIndex = -1;
   List<int?>? selectedAnswers = [];
@@ -45,11 +49,17 @@ class _QuizPageState extends State<QuizPage> {
       startTimer();
     }
     fetchQuizData();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    );
+    _controller.repeat();
   }
 
   @override
   void dispose() {
     countdownTimer?.cancel();
+    _controller.dispose();
     // confettiController.dispose();// Cancel the timer when the widget is disposed
     super.dispose();
   }
@@ -57,11 +67,17 @@ class _QuizPageState extends State<QuizPage> {
   Future<void> fetchQuizData() async {
     final url = "https://quizz-app-backend-3ywc.onrender.com/question/?question_id=${widget.examId}"; // Replace with actual URL
     try {
+      String? token = await TokenStorage.getToken();
+
+      if (token == null) {
+        print('Token is null');
+        return;
+      }
       final response = await http.get(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': "Bearer ${Global.token}"
+          'Authorization': "Bearer $token"
         },
       );
 print("quiz data response ===> ${response.statusCode}");
@@ -112,7 +128,7 @@ print("url is==> ${url}");
             onPressed: () {
               Navigator.of(context).pop();
               // Perform any action when time is up, such as submitting quiz
-              finishQuiz();
+              finishQuiz(context);
             },
             child: const Text('OK'),
           ),
@@ -189,7 +205,7 @@ print("url is==> ${url}");
         }
       } else {
         widget.reviewMode ? finishQuizReview()
-       : finishQuiz();
+       : finishQuiz(context);
       }
     });
   }
@@ -236,71 +252,108 @@ print("url is==> ${url}");
   }
 
   // Finish the quiz
-  void finishQuiz() {
+  void finishQuiz(BuildContext context) {
     int totalQuestions = quizData!.data!.length;
     int correctAnswers = calculateCorrectAnswers(quizData!.data!, selectedAnswers!);
     int wrongAnswers = totalQuestions - correctAnswers;
     double scorePercentage = (correctAnswers / totalQuestions) * 100;
     countdownTimer?.cancel(); // Stop the timer when the quiz finishes
     // confettiController.play();
-    showDialog(
+    AwesomeDialog(
       context: context,
-      builder: (_) => Stack(
-        children: [
-          //ConfettiWidget(
-           //  confettiController: confettiController,
-           // blastDirection: pi / 2, // Direction of the confetti
-           //  emissionFrequency: 0.2,
-           //  numberOfParticles: 20,
-           //  blastDirectionality: BlastDirectionality.explosive,
-           //  gravity: 0.1,
-           //  colors: const [Colors.red, Colors.green, Colors.blue, Colors.yellow], // Custom colors
-            //child:
-            AlertDialog(
-              title: const Text('Quiz Completed!',style: TextStyle(
-                fontSize: 22, fontWeight: FontWeight.w500
-              ),),
-              // content: Text('You have finished the quiz.'),
-              content: const Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('You have finished the quiz.',style: TextStyle(
-                    fontWeight: FontWeight.w400, fontSize: 16
-                  ),),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    // confettiController.stop();
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ScorePage(
-                          correctAnswers: correctAnswers,
-                          scorePercentage: scorePercentage,
-                          totalQuestions: totalQuestions,
-                          wrongAnswers: wrongAnswers,
-                          selectedAnswer: selectedAnswers,
-                          correctAnswersList: quizData!.data!.map((e) => e.correctAnswer!).toList(),
-                          categoryName: widget.categoryName,
-                          examId: widget.examId,
-                          questionId: quizData!.data!.map((e) => e.sId!).toList(),
-                          userAnswer: selectedAnswers,
-
-                        )),
-                      );
-                  },
-                  child: const Text('Finish',style: TextStyle(
-                    fontSize: 18, fontWeight: FontWeight.w600
-                  ),),
-                ),
-              ],
-            ),
-         // ),
-        ],
+      dialogType: DialogType.success,
+      animType: AnimType.bottomSlide,
+      showCloseIcon: true,
+      customHeader: RotationTransition(
+        turns: _controller,
+        child: Icon(
+          Icons.check_circle,  // Custom success icon
+          color: Themer.buttonColor,
+          size: 90,
+        ),
       ),
-    );
+      title: "Quiz Completed!",
+      desc: "You have finished the quiz",
+      btnOkColor: Themer.buttonColor,
+      btnOkText: 'Finish',
+      btnOkOnPress: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ScorePage(
+            correctAnswers: correctAnswers,
+            scorePercentage: scorePercentage,
+            totalQuestions: totalQuestions,
+            wrongAnswers: wrongAnswers,
+            selectedAnswer: selectedAnswers,
+            correctAnswersList: quizData!.data!.map((e) => e.correctAnswer!).toList(),
+            categoryName: widget.categoryName,
+            examId: widget.examId,
+            questionId: quizData!.data!.map((e) => e.sId!).toList(),
+            userAnswer: selectedAnswers,
+          )),
+        );
+      },
+    ).show();
+    // showDialog(
+    //   context: context,
+    //   builder: (_) => Stack(
+    //     children: [
+    //       //ConfettiWidget(
+    //        //  confettiController: confettiController,
+    //        // blastDirection: pi / 2, // Direction of the confetti
+    //        //  emissionFrequency: 0.2,
+    //        //  numberOfParticles: 20,
+    //        //  blastDirectionality: BlastDirectionality.explosive,
+    //        //  gravity: 0.1,
+    //        //  colors: const [Colors.red, Colors.green, Colors.blue, Colors.yellow], // Custom colors
+    //         //child:
+    //         AlertDialog(
+    //           title: const Text('Quiz Completed!',style: TextStyle(
+    //             fontSize: 22, fontWeight: FontWeight.w500
+    //           ),),
+    //           // content: Text('You have finished the quiz.'),
+    //           content: const Column(
+    //             mainAxisSize: MainAxisSize.min,
+    //             children: [
+    //               Text('You have finished the quiz.',style: TextStyle(
+    //                 fontWeight: FontWeight.w400, fontSize: 16
+    //               ),),
+    //             ],
+    //           ),
+    //           actions: [
+    //             TextButton(
+    //               onPressed: () {
+    //                 // confettiController.stop();
+    //
+    //                   Navigator.push(
+    //                     context,
+    //                     MaterialPageRoute(builder: (context) => ScorePage(
+    //                       correctAnswers: correctAnswers,
+    //                       scorePercentage: scorePercentage,
+    //                       totalQuestions: totalQuestions,
+    //                       wrongAnswers: wrongAnswers,
+    //                       selectedAnswer: selectedAnswers,
+    //                       correctAnswersList: quizData!.data!.map((e) => e.correctAnswer!).toList(),
+    //                       categoryName: widget.categoryName,
+    //                       examId: widget.examId,
+    //                       questionId: quizData!.data!.map((e) => e.sId!).toList(),
+    //                       userAnswer: selectedAnswers,
+    //
+    //                     )),
+    //                   );
+    //               },
+    //               child: const Text('Finish',style: TextStyle(
+    //                 fontSize: 18, fontWeight: FontWeight.w600
+    //               ),),
+    //             ),
+    //           ],
+    //         ),
+    //      // ),
+    //     ],
+    //   ),
+    // );
+
+
   }
 
   @override

@@ -6,6 +6,7 @@ import 'package:quiz/global/global.dart';
 import 'package:quiz/screen/quizPage.dart';
 import 'package:quiz/theme/theme.dart';
 import 'package:http/http.dart' as http;
+import '../global/tokenStorage.dart';
 import '../model/questionSelectionModel.dart';
 
 class QuestionSelection extends StatefulWidget {
@@ -32,20 +33,29 @@ class _QuestionSelectionState extends State<QuestionSelection> {
   }
 
   Future<void> _fetchExamDetails() async {
+
     setState(() {
       isLoading = true;
       hasError = false;
     });
 
     // API URL with dynamic difficulty
-    final url = "https://quizz-app-backend-3ywc.onrender.com/exam_detail?language_id=${widget.languageId}&category_id=${widget.categoryId}&difficulty=$selectedDifficulty";
 
+    final url = "https://quizz-app-backend-3ywc.onrender.com/exam_detail?language_id=${widget.languageId}&category_id=${widget.categoryId}&difficulty=$selectedDifficulty";
+    print('question selection url :: ${url}');
     try {
+      String? token = await TokenStorage.getToken();
+
+      if (token == null) {
+        print('Token is null');
+        return;
+      }
+      print('que token :: $token');
       final response = await http.get(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': "Bearer ${Global.token}"
+          'Authorization': "Bearer $token"
         },
       );
 

@@ -9,6 +9,7 @@ import 'package:quiz/screen/rankPage.dart';
 import 'package:quiz/theme/theme.dart';
 import 'package:http/http.dart' as http;
 import '../global/global.dart';
+import '../global/tokenStorage.dart';
 import '../model/examResultModel.dart';
 
 class ScorePage extends StatefulWidget {
@@ -52,12 +53,15 @@ class _ScorePageState extends State<ScorePage> {
     await collectUserResponsesAndSubmit();
     final url = Uri.parse(
         'https://quizz-app-backend-3ywc.onrender.com/exam_result?user_id=$userId&exam_id=${widget.examId}');
+    print('getExamResult api url :: $url');
     try {
+      String? token = await TokenStorage.getToken();
+
       final response = await http.get(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': "Bearer ${Global.token}"
+          'Authorization': "Bearer $token"
         },
       );
 
@@ -83,6 +87,7 @@ class _ScorePageState extends State<ScorePage> {
   Future<CreateExamRersultModel?> submitExamResult(
       String? userId, String? examId, double? score, List<Map<String, dynamic>> resultList) async {
     final url = Uri.parse('https://quizz-app-backend-3ywc.onrender.com/exam_result');
+    print('submitExamResult api url :: $url');
 
     Map<String, dynamic> body = {
       'user_id': userId,
@@ -92,11 +97,13 @@ class _ScorePageState extends State<ScorePage> {
     };
 
     try {
+      String? token = await TokenStorage.getToken();
+
       final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': "Bearer ${Global.token}"
+          'Authorization': "Bearer $token"
         },
         body: json.encode(body),
       );
@@ -132,11 +139,13 @@ class _ScorePageState extends State<ScorePage> {
     };
 
     try{
+      String? token = await TokenStorage.getToken();
+
       final response = await http.put(
               Uri.parse(apiUrl),
               headers: {
                 'Content-Type': 'application/json',
-                'Authorization': "Bearer ${Global.token}"
+                'Authorization': "Bearer $token"
               },
             body: json.encode(body),
             );
@@ -333,7 +342,7 @@ class _ScorePageState extends State<ScorePage> {
 
                           )),
                         );
-                        bool isUpdated = await updateExamResult(scoreId!, widget.scorePercentage);
+                        bool isUpdated = await updateExamResult(scoreId??'', widget.scorePercentage);
                         if (isUpdated) {
                           // Show a success message
                           ScaffoldMessenger.of(context).showSnackBar(

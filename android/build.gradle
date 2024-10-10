@@ -1,14 +1,24 @@
-//buildscript {
-//    ext.kotlin_version = '1.8.0' // Change this version
-//    repositories {
-//        google()
-//        mavenCentral()
-//    }
-//    dependencies {
-//        classpath 'com.android.tools.build:gradle:7.2.2' // Use an appropriate version
-//        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-//    }
-//}
+buildscript {
+    ext {
+        gradle_version = '7.4.2'
+        kotlin_version = '1.8.0'  // Ensure compatibility with plugin
+    }
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:$gradle_version"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+
+plugins {
+    id 'com.google.gms.google-services' version '4.4.2' apply false
+}
+
 allprojects {
     repositories {
         google()
