@@ -41,6 +41,7 @@ dependencies:
 #  confetti: ^0.7.0
   avatar_glow: ^3.0.1
   awesome_dialog: ^3.2.1
+  icon_animated: ^1.2.1
 
 dev_dependencies:
   flutter_test:

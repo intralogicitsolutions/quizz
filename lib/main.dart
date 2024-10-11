@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quiz/screen/editProfile.dart';
 import 'package:quiz/screen/questionSelection.dart';
 import 'package:quiz/screen/quizPage.dart';
 import 'package:quiz/screen/rankPage.dart';
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home:  const SplashScreen(),
+      // home:  const EditProfile(),
       debugShowCheckedModeBanner: false,
     );
   }

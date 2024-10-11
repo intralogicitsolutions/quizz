@@ -5,6 +5,7 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:icon_animated/icon_animated.dart';
 import 'package:quiz/model/quizModel.dart' as quizModel;
 import 'package:quiz/screen/scorePage.dart';
 import 'package:quiz/theme/theme.dart';
@@ -28,6 +29,7 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
   late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
 
   int currentQuestionIndex = 0;
   int selectedAnswerIndex = -1;
@@ -50,10 +52,14 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
     }
     fetchQuizData();
     _controller = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: const Duration(milliseconds: 500),
       vsync: this,
     );
-    _controller.repeat();
+    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeInOut,
+    ));
+    _controller.forward();
   }
 
   @override
@@ -204,6 +210,7 @@ print("url is==> ${url}");
           selectedAnswerIndex = selectedAnswers![currentQuestionIndex] ?? -1;
         }
       } else {
+        // active = !active;
         widget.reviewMode ? finishQuizReview()
        : finishQuiz(context);
       }
@@ -264,13 +271,32 @@ print("url is==> ${url}");
       dialogType: DialogType.success,
       animType: AnimType.bottomSlide,
       showCloseIcon: true,
-      customHeader: RotationTransition(
-        turns: _controller,
-        child: Icon(
-          Icons.check_circle,  // Custom success icon
-          color: Themer.buttonColor,
-          size: 90,
-        ),
+      customHeader: ScaleTransition(
+        // turns: _controller,
+        scale: _scaleAnimation,
+        child: Container(
+          width: 90,
+          height: 90,
+          decoration: BoxDecoration(
+            color: Themer.buttonColor, // Background color for the circle
+            shape: BoxShape.circle,    // Make it a circular background
+          ),
+          child: IconAnimated(
+              color: Colors.white,
+              active: true,
+              size: 90, iconType: IconType.check),
+        )
+        // child: IconAnimated(
+        //   color: Colors.black,
+        //   active: active,
+        //   size: 100,
+        //   iconType: IconType.check,
+        // ),
+        // child: Icon(
+        //   Icons.check_circle,  // Custom success icon
+        //   color: Themer.buttonColor,
+        //   size: 90,
+        // ),
       ),
       title: "Quiz Completed!",
       desc: "You have finished the quiz",
