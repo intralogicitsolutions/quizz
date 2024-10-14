@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:quiz/screen/questionSelection.dart';
 import 'package:quiz/theme/theme.dart';
-import '../global/global.dart';
 import 'package:http/http.dart' as http;
 import '../global/tokenStorage.dart';
 import '../model/categoryModel.dart';
