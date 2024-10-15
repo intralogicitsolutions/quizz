@@ -3,6 +3,9 @@ import 'package:http/http.dart' as http;
 class Global{
 
   static String? userId;
+  static String? userFirstName;
+  static String? userLastName;
+  static String? userEmail;
   static bool? score_update = false;
   static String? token ;
 

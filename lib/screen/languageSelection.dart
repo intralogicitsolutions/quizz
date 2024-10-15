@@ -2,7 +2,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:quiz/global/global.dart';
 import 'package:http/http.dart' as http;
+import 'package:quiz/screen/reset_passwordPage.dart';
 import 'package:quiz/theme/theme.dart';
+import '../component/snackBar.dart';
 import '../global/tokenStorage.dart';
 import '../model/languageModel.dart';
 import 'categorySelection.dart';
@@ -68,6 +70,60 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
     }
   }
 
+  Future<void> _logout(BuildContext context) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Logout', style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),),
+          content: const Text('Are you sure you want to logout?', style: TextStyle(fontSize: 15,fontWeight: FontWeight.w400),),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                await _callLogoutApi(context);
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Logout'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _callLogoutApi(BuildContext context) async {
+    String? token = await TokenStorage.getToken();
+    final String url = 'https://quizz-app-backend-3ywc.onrender.com/auth/logout'; // Replace with your API URL
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": "Bearer $token"
+      },
+    );
+
+    if (!context.mounted) return;
+
+    if (response.statusCode == 200) {
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   const SnackBar(content: Text('Logout successful')),
+      // );
+      CustomSnackbar.show(context, 'Logout successful');
+    } else {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(content: Text('Error: ${responseData['message']}')),
+      // );
+      CustomSnackbar.show(context, 'Error: ${responseData['message']}');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,8 +148,29 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
       ),
       drawer: Drawer(
         child: ListView(
-          padding: const EdgeInsets.all(5),
+          padding: const EdgeInsets.fromLTRB(5,0,0,5),
           children: [
+             DrawerHeader(
+              decoration: BoxDecoration(
+                color: Themer.buttonColor,
+              ), //BoxDecoration
+              child: UserAccountsDrawerHeader(
+                decoration: BoxDecoration(color: Themer.buttonColor),
+                accountName: Padding(
+                  padding: EdgeInsets.only(top: 30),
+                  child: Text(
+                    "${Global.userFirstName} ${Global.userLastName}",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+                accountEmail: Text("${Global.userEmail}"),
+                currentAccountPictureSize: Size.square(50),
+                currentAccountPicture: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.person, color: Colors.grey,size: 40,),
+                ), //circleAvatar
+              ), //UserAccountDrawerHeader
+            ), //Drawe
             Padding(
               padding: const EdgeInsets.only(top: 30.0,left: 20,right: 20),
               child: Column(
@@ -101,49 +178,63 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
 
-                  const Center(
-                    child:  Image(
-                      width: 100,
-                      height: 100,
-                      image: AssetImage('assets/images/quiz_logo1.png'),
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-
-                  const SizedBox(height: 10,),
-
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(10),
-                    decoration:  BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [Themer.buttonColor, Themer.textColor],
-                      ),
-                      borderRadius: BorderRadius.all(Radius.circular(10)),
-                    ),
-                    child:Wrap(
-                      children: [
-                        // const Icon(Icons.person,color: Themer.textColor,),
-                        const SizedBox(width: 10,),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-
-                            Text("Ishita Poshiya",style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: Colors.white),),
-                            const SizedBox(height: 5,),
-                            // Text(PbcAppInstance.instance.fullName.isEmpty?'Complete Profile Detail': PbcAppInstance.instance.fullName,
-                            //   style: TextStyle(color: Colors.grey,),),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
+                  // const Center(
+                  //   child:  Image(
+                  //     width: 100,
+                  //     height: 100,
+                  //     image: AssetImage('assets/images/quiz_logo1.png'),
+                  //     fit: BoxFit.contain,
+                  //   ),
+                  // ),
 
 
-                  const SizedBox(height: 10,),
+                  // Center(
+                  //   child: Container(
+                  //     padding: const EdgeInsets.all(10),
+                  //     decoration: BoxDecoration(
+                  //       border: Border.all(color: Colors.grey),
+                  //       borderRadius: BorderRadius.circular(50),
+                  //     ),
+                  //     child: SizedBox(
+                  //       width: 80,
+                  //       height: 80,
+                  //       child: Icon(Icons.person, color: Colors.grey,size: 80,),
+                  //     ),
+                  //   ),
+                  // ),
+
+                  // const SizedBox(height: 20,),
+                  //
+                  // Container(
+                  //   width: double.infinity,
+                  //   padding: const EdgeInsets.all(10),
+                  //   decoration:  BoxDecoration(
+                  //     gradient: LinearGradient(
+                  //       begin: Alignment.topLeft,
+                  //       end: Alignment.bottomRight,
+                  //       colors: [Themer.buttonColor, Themer.textColor],
+                  //     ),
+                  //     borderRadius: BorderRadius.all(Radius.circular(10)),
+                  //   ),
+                  //   child:Wrap(
+                  //     children: [
+                  //       // const Icon(Icons.person,color: Themer.textColor,),
+                  //       const SizedBox(width: 10,),
+                  //       Column(
+                  //         mainAxisAlignment: MainAxisAlignment.start,
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //
+                  //           Text("${Global.userFirstName} ${Global.userLastName}",style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: Colors.white),),
+                  //           const SizedBox(height: 5,),
+                  //           // Text(PbcAppInstance.instance.fullName.isEmpty?'Complete Profile Detail': PbcAppInstance.instance.fullName,
+                  //           //   style: TextStyle(color: Colors.grey,),),
+                  //         ],
+                  //       )
+                  //     ],
+                  //   ),
+                  // ),
+                  // const SizedBox(height: 10,),
                 ],
               ),
             ),
@@ -165,45 +256,15 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => EditProfile()),
+                      builder: (context) => ResetPasswordPage()),
                 );
               },
             ),
-            // SizedBox(
-            //   height: MediaQuery.of(context).size.height * 0.450,
-            // ),
-            // Padding(
-            //   padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-            //   child: Container(
-            //     width: double.infinity,
-            //     padding: const EdgeInsets.all(10),
-            //     decoration:  BoxDecoration(
-            //       gradient: LinearGradient(
-            //         begin: Alignment.topLeft,
-            //         end: Alignment.bottomRight,
-            //         colors: [Themer.buttonColor, Themer.buttonColor],
-            //       ),
-            //       borderRadius: BorderRadius.all(Radius.circular(10)),
-            //     ),
-            //     child:Wrap(
-            //       children: [
-            //         // const Icon(Icons.person,color: Themer.textColor,),
-            //         //const SizedBox(width: 10,),
-            //         Center(child: Text("Logout",style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: Colors.white),)),
-            //         const SizedBox(height: 5,)
-            //       ],
-            //     ),
-            //   ),
-            // ),
             ListTile(
               leading: const Icon(Icons.logout,color: Themer.buttonColor,),
               title: const Text(' Logout ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),
               onTap: () {
-                // baseWidget.showAlert("Logout", "Are you sure you want to logout?", "Logout", positive: () {
-                //   PbcAppInstance.instance.clearLoginSession(baseWidget.context);
-                // },negative:() {
-                //
-                // },negativeBtn: "Cancel");
+                _logout(context);
               },
             ),
           ],

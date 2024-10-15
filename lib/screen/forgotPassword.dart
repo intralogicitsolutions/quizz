@@ -39,11 +39,12 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         }
       } else {
         // Handle error
+        print(responseData['message']);
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: Text('Error'),
-            content: Text(responseData['message']),
+            content: Text(responseData['message']?? 'An unknown error occurred.'),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),

@@ -19,15 +19,14 @@ class EditProfile extends StatefulWidget{
 
 class _EditProfileState extends State<EditProfile> {
 
-  TextEditingController _firstNameController = TextEditingController();
-  TextEditingController _lastNameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _firstNameController = TextEditingController(text: Global.userFirstName);
+  TextEditingController _lastNameController = TextEditingController(text: Global.userLastName);
+  TextEditingController _emailController = TextEditingController(text: Global.userEmail);
+  // TextEditingController _passwordController = TextEditingController();
 
   bool _isLoading = false;
   bool _isLoadingProfile = true;
   String? userId = Global.userId;
-
 
   Future<void> _fetchUserProfile() async {
     String? token = await TokenStorage.getToken();
@@ -106,6 +105,9 @@ class _EditProfileState extends State<EditProfile> {
 
       if (response.statusCode == 200) {
         EditProfileModel editProfileResponse = EditProfileModel.fromJson(jsonDecode(response.body));
+        Global.userFirstName  =  editProfileResponse.data?.firstName;
+        Global.userLastName = editProfileResponse.data?.lastName;
+        Global.userEmail = editProfileResponse.data?.emailId;
 
         if (editProfileResponse.status == 200) {
           ScaffoldMessenger.of(context).showSnackBar(

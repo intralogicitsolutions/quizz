@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io'; // Import for File
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:image_picker/image_picker.dart'; // Import image_picker
 import 'package:quiz/screen/forgotPassword.dart';
 import 'package:quiz/theme/theme.dart';
 import 'package:http/http.dart' as http;
@@ -97,8 +99,9 @@ class _LoginFormState extends State<LoginForm> {
   final _lastNameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  File? _image;
   bool isPasswordVisible = false;
-  bool isLoading = false; // Add loading state
+  bool isLoading = false;
 
   final String signupUrl = 'https://quizz-app-backend-3ywc.onrender.com/auth/signup';
   final String signinUrl = 'https://quizz-app-backend-3ywc.onrender.com/auth/signin';
@@ -112,27 +115,78 @@ class _LoginFormState extends State<LoginForm> {
     super.dispose();
   }
 
+  // Future<void> pickImage() async {
+  //   final ImagePicker _picker = ImagePicker();
+  //   final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+  //   // Alternatively, you can use ImageSource.camera for camera upload
+  //   // final XFile? image = await _picker.pickImage(source: ImageSource.camera);
+  //
+  //   if (image != null) {
+  //     setState(() {
+  //       _image = File(image.path);
+  //     });
+  //   }
+  // }
+
+  Future<void> pickImage() async {
+    final ImagePicker _picker = ImagePicker();
+
+    // Show a dialog to choose between camera and gallery
+    final pickedSource = await showDialog<ImageSource>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Select Image Source', style: TextStyle(fontSize: 22,fontWeight: FontWeight.w400),),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, ImageSource.camera),
+              child: const Text('Camera', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18),),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, ImageSource.gallery),
+              child: const Text('Gallery'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (pickedSource != null) {
+      final XFile? image = await _picker.pickImage(source: pickedSource);
+
+      if (image != null) {
+        setState(() {
+          _image = File(image.path);
+        });
+      }
+    }
+  }
+
+
   Future<void> handleSignup() async {
     try {
       if (mounted) {
         setState(() {
-          isLoading = true; // Show loading indicator
+          isLoading = true;
         });
       }
 
-      final response = await http.post(
-        Uri.parse(signupUrl),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'first_name': _firstNameController.text,
-          'last_name': _lastNameController.text,
-          'email_id': _emailController.text,
-          'password': _passwordController.text,
-        }),
-      );
+      var request = http.MultipartRequest('POST', Uri.parse(signupUrl));
+      request.headers['Content-Type'] = 'application/json';
 
-      final Map<String, dynamic> responseData = jsonDecode(response.body);
-     // if (!mounted) return;
+      request.fields['first_name'] = _firstNameController.text;
+      request.fields['last_name'] = _lastNameController.text;
+      request.fields['email_id'] = _emailController.text;
+      request.fields['password'] = _passwordController.text;
+
+      if (_image != null) {
+        request.files.add(await http.MultipartFile.fromPath('image_path', _image!.path));
+      }
+
+      final response = await request.send();
+
+      final responseData = await http.Response.fromStream(response);
+      final Map<String, dynamic> responseJson = jsonDecode(responseData.body);
 
       if (response.statusCode == 200) {
         if (!mounted) return;
@@ -142,14 +196,13 @@ class _LoginFormState extends State<LoginForm> {
           context,
           MaterialPageRoute(builder: (context) => const LanguageSelectionPage()),
         );
-        // await handleSignin(_emailController.text, _passwordController.text);
       } else if (response.statusCode == 400) {
         if (!mounted) return;
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('Signup Error'),
-            content: Text(responseData['message']),
+            content: Text(responseJson['message']),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
@@ -180,8 +233,6 @@ class _LoginFormState extends State<LoginForm> {
         Uri.parse(signinUrl),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          // 'email_id': _emailController.text,
-          // 'password': _passwordController.text,
           'email_id': email,
           'password': password,
         }),
@@ -193,6 +244,15 @@ class _LoginFormState extends State<LoginForm> {
       if (response.statusCode == 200) {
         final userId = responseData['data']['_id'];
         Global.userId = userId;
+        final userFirstName = responseData['data']['first_name'];
+        Global.userFirstName = userFirstName;
+
+        final userLastName = responseData['data']['last_name'];
+        Global.userLastName = userLastName;
+
+        final userEmail = responseData['data']['email_id'];
+        Global.userEmail = userEmail;
+
         final token = responseData['data']['access_token'];
         await TokenStorage.saveToken(token);
         Global.token = token;
@@ -231,6 +291,49 @@ class _LoginFormState extends State<LoginForm> {
       children: [
         Column(
           children: [
+            if (!widget.isLogin) const SizedBox(height: 10),
+            if (!widget.isLogin)
+              GestureDetector(
+                onTap: pickImage,
+                child: Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+
+                  // child: Row(
+                  //   children: [
+                  //     if (_image != null)
+                  //       Image.file(
+                  //         _image!,
+                  //         width: 50,
+                  //         height: 50,
+                  //         fit: BoxFit.cover,
+                  //       )
+                  //     else
+                  //       const Icon(Icons.add_a_photo),
+                  //     const SizedBox(width: 10),
+                  //     const Text('Upload Photo'),
+                  //   ],
+                  // ),
+                  child: _image == null
+                      ? Container(
+                    width: 80,
+                    height: 80,
+                    child: Icon(Icons.person, color: Colors.grey,size: 80,),
+                  )
+                  // const Text('Select an image (optional)')
+                      : Image.file(
+                    _image!,
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+            const SizedBox(height: 20),
+
             if (!widget.isLogin)
               TextField(
                 controller: _firstNameController,
@@ -294,6 +397,7 @@ class _LoginFormState extends State<LoginForm> {
                 fillColor: Colors.grey.shade100,
               ),
             ),
+            if (widget.isLogin)
             Align(
               alignment: Alignment.centerLeft,
               child: TextButton(
@@ -312,6 +416,7 @@ class _LoginFormState extends State<LoginForm> {
                 ),
               ),
             ),
+
             const SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
@@ -331,18 +436,15 @@ class _LoginFormState extends State<LoginForm> {
                   ),
                 ),
                 child: Text(
-                  widget.isLogin ? 'LOGIN' : 'SIGN UP',
-                  style: const TextStyle(
-                    color: Themer.Text2Color,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  widget.isLogin ? 'Login' : 'Sign Up',
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
             ),
           ],
         ),
-        if (isLoading) // Show loading spinner
-          Center(
+        if (isLoading)
+          const Center(
             child: CircularProgressIndicator(),
           ),
       ],
@@ -351,12 +453,108 @@ class _LoginFormState extends State<LoginForm> {
 }
 
 
+
+// import 'dart:convert';
+// import 'package:flutter/material.dart';
+// import 'package:flutter/cupertino.dart';
+// import 'package:quiz/screen/forgotPassword.dart';
+// import 'package:quiz/theme/theme.dart';
+// import 'package:http/http.dart' as http;
+// import '../global/global.dart';
+// import '../global/tokenStorage.dart';
+// import 'languageSelection.dart';
+//
+// class Login extends StatefulWidget {
+//   const Login({super.key});
+//
+//   @override
+//   State<Login> createState() => _LoginState();
+// }
+//
+// class _LoginState extends State<Login> {
+//   bool isLogin = true;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       backgroundColor: Colors.white,
+//       body: Stack(
+//         children: [
+//           Positioned(
+//             top: -80,
+//             left: -80,
+//             child: CircleAvatar(
+//               radius: 150,
+//               backgroundColor: Colors.purple.shade200,
+//             ),
+//           ),
+//           Positioned(
+//             top: 60,
+//             right: -80,
+//             child: CircleAvatar(
+//               radius: 100,
+//               backgroundColor: Colors.purple.shade100,
+//             ),
+//           ),
+//           Center(
+//             child: Padding(
+//               padding: const EdgeInsets.symmetric(horizontal: 20.0),
+//               child: SingleChildScrollView(
+//                 scrollDirection: Axis.vertical,
+//                 child: Column(
+//                   mainAxisAlignment: MainAxisAlignment.center,
+//                   children: [
+//                     const SizedBox(height: 30),
+//                     Image.asset("assets/images/quiz_logo1.png", height: 130),
+//                     const SizedBox(height: 10),
+//                     LoginForm(isLogin: isLogin),
+//                     const SizedBox(height: 20),
+//                     GestureDetector(
+//                       onTap: () {
+//                         if (mounted) {
+//                           setState(() {
+//                             isLogin = !isLogin;
+//                           });
+//                         }
+//                       },
+//                       child: Text(
+//                         isLogin
+//                             ? "Don't have an account? Sign up"
+//                             : "Already have an account? Login",
+//                         style: const TextStyle(
+//                           color: Colors.purple,
+//                           fontSize: 16,
+//                           decoration: TextDecoration.underline,
+//                         ),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
+//
+// class LoginForm extends StatefulWidget {
+//   final bool isLogin;
+//
+//   const LoginForm({required this.isLogin});
+//
+//   @override
+//   State<LoginForm> createState() => _LoginFormState();
+// }
+//
 // class _LoginFormState extends State<LoginForm> {
 //   final _firstNameController = TextEditingController();
 //   final _lastNameController = TextEditingController();
 //   final _emailController = TextEditingController();
 //   final _passwordController = TextEditingController();
 //   bool isPasswordVisible = false;
+//   bool isLoading = false; // Add loading state
 //
 //   final String signupUrl = 'https://quizz-app-backend-3ywc.onrender.com/auth/signup';
 //   final String signinUrl = 'https://quizz-app-backend-3ywc.onrender.com/auth/signin';
@@ -372,6 +570,12 @@ class _LoginFormState extends State<LoginForm> {
 //
 //   Future<void> handleSignup() async {
 //     try {
+//       if (mounted) {
+//         setState(() {
+//           isLoading = true; // Show loading indicator
+//         });
+//       }
+//
 //       final response = await http.post(
 //         Uri.parse(signupUrl),
 //         headers: {'Content-Type': 'application/json'},
@@ -384,14 +588,19 @@ class _LoginFormState extends State<LoginForm> {
 //       );
 //
 //       final Map<String, dynamic> responseData = jsonDecode(response.body);
-//       if (!mounted) return; // Ensure widget is still in the tree
+//      // if (!mounted) return;
 //
 //       if (response.statusCode == 200) {
+//         if (!mounted) return;
+//         await handleSignin(_emailController.text, _passwordController.text);
+//
 //         Navigator.pushReplacement(
 //           context,
 //           MaterialPageRoute(builder: (context) => const LanguageSelectionPage()),
 //         );
+//         // await handleSignin(_emailController.text, _passwordController.text);
 //       } else if (response.statusCode == 400) {
+//         if (!mounted) return;
 //         showDialog(
 //           context: context,
 //           builder: (context) => AlertDialog(
@@ -407,19 +616,30 @@ class _LoginFormState extends State<LoginForm> {
 //         );
 //       }
 //     } catch (e) {
-//       if (!mounted) return;
 //       print('Error during signup: $e');
+//     } finally {
+//       if (mounted) {
+//         setState(() {
+//           isLoading = false; // Hide loading indicator
+//         });
+//       }
 //     }
 //   }
 //
-//   Future<void> handleSignin() async {
+//   Future<void> handleSignin(String email, String password) async {
 //     try {
+//       setState(() {
+//         isLoading = true; // Show loading indicator
+//       });
+//
 //       final response = await http.post(
 //         Uri.parse(signinUrl),
 //         headers: {'Content-Type': 'application/json'},
 //         body: jsonEncode({
-//           'email_id': _emailController.text,
-//           'password': _passwordController.text,
+//           // 'email_id': _emailController.text,
+//           // 'password': _passwordController.text,
+//           'email_id': email,
+//           'password': password,
 //         }),
 //       );
 //
@@ -428,11 +648,11 @@ class _LoginFormState extends State<LoginForm> {
 //
 //       if (response.statusCode == 200) {
 //         final userId = responseData['data']['_id'];
-//         Global.userId = userId; // Set the global user ID
-//
+//         Global.userId = userId;
 //         final token = responseData['data']['access_token'];
 //         await TokenStorage.saveToken(token);
-//         print('token :: ${token}');
+//         Global.token = token;
+//         print('token :: $token');
 //         Navigator.pushReplacement(
 //           context,
 //           MaterialPageRoute(builder: (context) => const LanguageSelectionPage()),
@@ -453,125 +673,134 @@ class _LoginFormState extends State<LoginForm> {
 //         );
 //       }
 //     } catch (e) {
-//       if (!mounted) return;
 //       print('Error during signin: $e');
+//     } finally {
+//       setState(() {
+//         isLoading = false;
+//       });
 //     }
 //   }
 //
 //   @override
 //   Widget build(BuildContext context) {
-//     return Column(
+//     return Stack(
 //       children: [
-//         if (!widget.isLogin)
-//           TextField(
-//             controller: _firstNameController,
-//             decoration: InputDecoration(
-//               labelText: 'First name',
-//               prefixIcon: const Icon(Icons.person),
-//               border: OutlineInputBorder(
-//                 borderRadius: BorderRadius.circular(30),
+//         Column(
+//           children: [
+//             if (!widget.isLogin)
+//               TextField(
+//                 controller: _firstNameController,
+//                 decoration: InputDecoration(
+//                   labelText: 'First name',
+//                   prefixIcon: const Icon(Icons.person),
+//                   border: OutlineInputBorder(
+//                     borderRadius: BorderRadius.circular(30),
+//                   ),
+//                   filled: true,
+//                   fillColor: Colors.grey.shade100,
+//                 ),
 //               ),
-//               filled: true,
-//               fillColor: Colors.grey.shade100,
-//             ),
-//           ),
-//         if (!widget.isLogin)
-//           const SizedBox(height: 10),
-//         if (!widget.isLogin)
-//           TextField(
-//             controller: _lastNameController,
-//             decoration: InputDecoration(
-//               labelText: 'Last name',
-//               prefixIcon: const Icon(Icons.person),
-//               border: OutlineInputBorder(
-//                 borderRadius: BorderRadius.circular(30),
+//             if (!widget.isLogin) const SizedBox(height: 10),
+//             if (!widget.isLogin)
+//               TextField(
+//                 controller: _lastNameController,
+//                 decoration: InputDecoration(
+//                   labelText: 'Last name',
+//                   prefixIcon: const Icon(Icons.person),
+//                   border: OutlineInputBorder(
+//                     borderRadius: BorderRadius.circular(30),
+//                   ),
+//                   filled: true,
+//                   fillColor: Colors.grey.shade100,
+//                 ),
 //               ),
-//               filled: true,
-//               fillColor: Colors.grey.shade100,
+//             if (!widget.isLogin) const SizedBox(height: 10),
+//             TextField(
+//               controller: _emailController,
+//               decoration: InputDecoration(
+//                 labelText: 'Email',
+//                 prefixIcon: const Icon(Icons.email),
+//                 border: OutlineInputBorder(
+//                   borderRadius: BorderRadius.circular(30),
+//                 ),
+//                 filled: true,
+//                 fillColor: Colors.grey.shade100,
+//               ),
 //             ),
-//           ),
-//         if (!widget.isLogin)
-//           const SizedBox(height: 10),
-//         TextField(
-//           controller: _emailController,
-//           decoration: InputDecoration(
-//             labelText: 'Email',
-//             prefixIcon: const Icon(Icons.email),
-//             border: OutlineInputBorder(
-//               borderRadius: BorderRadius.circular(30),
+//             const SizedBox(height: 10),
+//             TextField(
+//               controller: _passwordController,
+//               obscureText: !isPasswordVisible,
+//               decoration: InputDecoration(
+//                 labelText: 'Password',
+//                 prefixIcon: IconButton(
+//                   icon: Icon(
+//                     isPasswordVisible ? Icons.lock_open : Icons.lock,
+//                   ),
+//                   onPressed: () {
+//                     setState(() {
+//                       isPasswordVisible = !isPasswordVisible;
+//                     });
+//                   },
+//                 ),
+//                 border: OutlineInputBorder(
+//                   borderRadius: BorderRadius.circular(30),
+//                 ),
+//                 filled: true,
+//                 fillColor: Colors.grey.shade100,
+//               ),
 //             ),
-//             filled: true,
-//             fillColor: Colors.grey.shade100,
-//           ),
+//             Align(
+//               alignment: Alignment.centerLeft,
+//               child: TextButton(
+//                 onPressed: () {
+//                   Navigator.push(
+//                     context,
+//                     MaterialPageRoute(builder: (context) => const ForgotPassword()),
+//                   );
+//                 },
+//                 child: const Text(
+//                   'Forgot Password?',
+//                   style: TextStyle(
+//                     color: Colors.purple,
+//                     decoration: TextDecoration.underline,
+//                   ),
+//                 ),
+//               ),
+//             ),
+//             const SizedBox(height: 20),
+//             SizedBox(
+//               width: double.infinity,
+//               child: ElevatedButton(
+//                 onPressed: () {
+//                   if (widget.isLogin) {
+//                     handleSignin(_emailController.text, _passwordController.text);
+//                   } else {
+//                     handleSignup();
+//                   }
+//                 },
+//                 style: ElevatedButton.styleFrom(
+//                   backgroundColor: Themer.selectColor,
+//                   padding: const EdgeInsets.symmetric(vertical: 15),
+//                   shape: RoundedRectangleBorder(
+//                     borderRadius: BorderRadius.circular(30),
+//                   ),
+//                 ),
+//                 child: Text(
+//                   widget.isLogin ? 'LOGIN' : 'SIGN UP',
+//                   style: const TextStyle(
+//                     color: Themer.Text2Color,
+//                     fontWeight: FontWeight.bold,
+//                   ),
+//                 ),
+//               ),
+//             ),
+//           ],
 //         ),
-//         const SizedBox(height: 10),
-//         TextField(
-//           controller: _passwordController,
-//           obscureText: !isPasswordVisible,
-//           decoration: InputDecoration(
-//             labelText: 'Password',
-//             prefixIcon: IconButton(
-//               icon: Icon(
-//                 isPasswordVisible ? Icons.lock_open : Icons.lock,
-//               ),
-//               onPressed: () {
-//                 setState(() {
-//                   isPasswordVisible = !isPasswordVisible;
-//                 });
-//               },
-//             ),
-//             border: OutlineInputBorder(
-//               borderRadius: BorderRadius.circular(30),
-//             ),
-//             filled: true,
-//             fillColor: Colors.grey.shade100,
+//         if (isLoading) // Show loading spinner
+//           Center(
+//             child: CircularProgressIndicator(),
 //           ),
-//         ),
-//         Align(
-//           alignment: Alignment.centerLeft,
-//           child: TextButton(
-//             onPressed: () {
-//               Navigator.push(
-//                 context,
-//                 MaterialPageRoute(builder: (context) => const ForgotPassword()),
-//               );
-//             },
-//             child: const Text(
-//               'Forgot Password?',
-//               style: TextStyle(
-//                 color: Colors.purple,
-//                 decoration: TextDecoration.underline,
-//               ),
-//             ),
-//           ),
-//         ),
-//         const SizedBox(height: 20),
-//         SizedBox(
-//           width: double.infinity,
-//           child: ElevatedButton(
-//             onPressed: () {
-//               if (widget.isLogin) {
-//                 handleSignin();
-//               } else {
-//                 handleSignup();
-//               }
-//             },
-//             style: ElevatedButton.styleFrom(
-//               backgroundColor: Themer.selectColor,
-//               padding: const EdgeInsets.symmetric(vertical: 15),
-//               shape: RoundedRectangleBorder(
-//                 borderRadius: BorderRadius.circular(30),
-//               ),
-//             ),
-//             child: Text(
-//               widget.isLogin ? 'LOGIN' : 'SIGN UP',
-//               style: const TextStyle(
-//                 color: Themer.Text2Color,
-//                 fontWeight: FontWeight.bold,
-//               ),
-//             ),
-//           ),
-//         ),
 //       ],
 //     );
 //   }
