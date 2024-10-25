@@ -115,19 +115,6 @@ class _LoginFormState extends State<LoginForm> {
     super.dispose();
   }
 
-  // Future<void> pickImage() async {
-  //   final ImagePicker _picker = ImagePicker();
-  //   final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
-  //   // Alternatively, you can use ImageSource.camera for camera upload
-  //   // final XFile? image = await _picker.pickImage(source: ImageSource.camera);
-  //
-  //   if (image != null) {
-  //     setState(() {
-  //       _image = File(image.path);
-  //     });
-  //   }
-  // }
-
   Future<void> pickImage() async {
     final ImagePicker _picker = ImagePicker();
 
@@ -144,7 +131,7 @@ class _LoginFormState extends State<LoginForm> {
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, ImageSource.gallery),
-              child: const Text('Gallery'),
+              child: const Text('Gallery', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18),),
             ),
           ],
         );
@@ -161,6 +148,7 @@ class _LoginFormState extends State<LoginForm> {
       }
     }
   }
+  //String imgUrl = "https://quizz-app-backend-3ywc.onrender.com/images/upload";
 
 
   Future<void> handleSignup() async {
@@ -171,26 +159,80 @@ class _LoginFormState extends State<LoginForm> {
         });
       }
 
-      var request = http.MultipartRequest('POST', Uri.parse(signupUrl));
-      request.headers['Content-Type'] = 'application/json';
-
-      request.fields['first_name'] = _firstNameController.text;
-      request.fields['last_name'] = _lastNameController.text;
-      request.fields['email_id'] = _emailController.text;
-      request.fields['password'] = _passwordController.text;
-
+      String? imgUrl;
       if (_image != null) {
-        request.files.add(await http.MultipartFile.fromPath('image_path', _image!.path));
+        // Create a request to upload the image
+        var request = http.MultipartRequest(
+          'POST',
+          Uri.parse('https://quizz-app-backend-3ywc.onrender.com/images/upload'),
+        );
+        request.files.add(await http.MultipartFile.fromPath('image', _image!.path));
+
+        // Send the request
+
+        var response = await request.send();
+        var responseData = await http.Response.fromStream(response);
+
+        if (response.statusCode == 200) {
+          final Map<String, dynamic> imageResponse = jsonDecode(responseData.body);
+          imgUrl = imageResponse['data']['img_url']; // Get img_url from the response
+        } else {
+          // Handle image upload error
+          print('Image upload failed: ${responseData.body}');
+          return; // Stop the signup process if image upload fails
+        }
       }
 
-      final response = await request.send();
+      // var request = http.MultipartRequest('POST', Uri.parse(signupUrl));
+      // // request.headers['Content-Type'] = 'application/json';
+      //
+      // request.fields['last_name'] = _lastNameController.text.trim();
+      // request.fields['email_id'] = _emailController.text.trim();
+      // request.fields['first_name'] = _firstNameController.text.trim();
+      // request.fields['password'] = _passwordController.text.trim();
+      //
+      // if (_image != null) {
+      //   request.files.add(await http.MultipartFile.fromPath('image_path', _image!.path));
+      // }
+      //
+      // final response = await request.send();
+      //
+      // final responseData = await http.Response.fromStream(response);
+      // final Map<String, dynamic> responseJson = jsonDecode(responseData.body);
+      // String imgUrl = "https://quizz-app-backend-3ywc.onrender.com/images/upload";
 
-      final responseData = await http.Response.fromStream(response);
-      final Map<String, dynamic> responseJson = jsonDecode(responseData.body);
+      var requestBody = {
+        'first_name': _firstNameController.text.trim(),
+        'last_name': _lastNameController.text.trim(),
+        'email_id': _emailController.text.trim(),
+        'password': _passwordController.text.trim(),
+        // Set image_path if it's not necessary to send the file
+        'image_path': imgUrl ?? '',
+        //'image_path': _image != null ? '$imgUrl/${_image!.path.split('/').last}' : '', // Construct full image URL
+        //'image_path': _image != null ? _image!.path.split('/').last : '', // Extract filename
+      };
+
+      // Send the request as JSON
+      final response = await http.post(
+        Uri.parse(signupUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(requestBody),
+      );
+
+      // Handle the response
+      final Map<String, dynamic> responseJson = jsonDecode(response.body);
+
 
       if (response.statusCode == 200) {
         if (!mounted) return;
+
+        // final userId = responseJson['data']['_id'];
+        // final imagePath = responseJson['data']['image_path'];
+        //
+        // print('Signup successful! User ID: $userId, Image Path: $imagePath');
+
         await handleSignin(_emailController.text, _passwordController.text);
+        print('Signup failed with status ${response.statusCode}: ${response.body}');
 
         Navigator.pushReplacement(
           context,
@@ -198,6 +240,7 @@ class _LoginFormState extends State<LoginForm> {
         );
       } else if (response.statusCode == 400) {
         if (!mounted) return;
+        print('Signup failed with status ${response.statusCode}: ${response.body}');
         showDialog(
           context: context,
           builder: (context) => AlertDialog(
@@ -252,6 +295,11 @@ class _LoginFormState extends State<LoginForm> {
 
         final userEmail = responseData['data']['email_id'];
         Global.userEmail = userEmail;
+
+        final userImagePath = responseData['data']['image_path'];
+        Global.userImagePath = userImagePath;
+
+        print('image path is ===> ${Global.userImagePath}');
 
         final token = responseData['data']['access_token'];
         await TokenStorage.saveToken(token);

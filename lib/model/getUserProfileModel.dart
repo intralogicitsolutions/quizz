@@ -28,8 +28,7 @@ class Data {
   String? lastName;
   String? emailId;
   String? password;
-  Null? resetToken;
-  Null? resetTokenExpires;
+  String? imagePath;
 
   Data(
       {this.sId,
@@ -37,8 +36,7 @@ class Data {
         this.lastName,
         this.emailId,
         this.password,
-        this.resetToken,
-        this.resetTokenExpires});
+        this.imagePath});
 
   Data.fromJson(Map<String, dynamic> json) {
     sId = json['_id'];
@@ -46,8 +44,7 @@ class Data {
     lastName = json['last_name'];
     emailId = json['email_id'];
     password = json['password'];
-    resetToken = json['reset_token'];
-    resetTokenExpires = json['reset_token_expires'];
+    imagePath = json['image_path'];
   }
 
   Map<String, dynamic> toJson() {
@@ -57,8 +54,7 @@ class Data {
     data['last_name'] = this.lastName;
     data['email_id'] = this.emailId;
     data['password'] = this.password;
-    data['reset_token'] = this.resetToken;
-    data['reset_token_expires'] = this.resetTokenExpires;
+    data['image_path'] = this.imagePath;
     return data;
   }
 }

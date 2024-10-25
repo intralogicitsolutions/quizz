@@ -6,6 +6,8 @@ class Global{
   static String? userFirstName;
   static String? userLastName;
   static String? userEmail;
+  static String? userImagePath;
+
   static bool? score_update = false;
   static String? token ;
 

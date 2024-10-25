@@ -34,7 +34,7 @@ class ScorePage extends StatefulWidget {
 }
 
 class _ScorePageState extends State<ScorePage> {
-  //bool isLoading = true;
+  bool isLoading = false;
   String? scoreId;
   String? userId = Global.userId;
   int? rank;
@@ -49,7 +49,9 @@ class _ScorePageState extends State<ScorePage> {
   }
 
   Future<ExamRersultModel?> getExamResult() async {
-
+    setState(() {
+      isLoading = true;
+    });
     await collectUserResponsesAndSubmit();
     final url = Uri.parse(
         'https://quizz-app-backend-3ywc.onrender.com/exam_result?user_id=$userId&exam_id=${widget.examId}');
@@ -72,6 +74,13 @@ class _ScorePageState extends State<ScorePage> {
           rank = responseData['rank']; // Save the rank in the state
         });
         print("Rank ::::: $rank");
+        setState(() {
+          isLoading = false;
+        });
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => RankPage(rank: rank)),
+        // );
         return ExamRersultModel.fromJson(responseData);
       } else {
         print('Failed to get exam result: ${response.body}');
@@ -200,11 +209,13 @@ class _ScorePageState extends State<ScorePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
       backgroundColor: Themer.buttonTextColor,
-      body:
-
-      Center(
+      body: isLoading ?
+          Container(
+            color: Colors.white,
+            child: Center(child: CircularProgressIndicator(),),
+          )
+     : Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
@@ -339,7 +350,6 @@ class _ScorePageState extends State<ScorePage> {
                           MaterialPageRoute(builder: (context) => QuizPage(reviewMode: false,
                             categoryName: widget.categoryName,
                             examId: widget.examId,
-
                           )),
                         );
                         bool isUpdated = await updateExamResult(scoreId??'', widget.scorePercentage);
@@ -372,12 +382,16 @@ class _ScorePageState extends State<ScorePage> {
                   ),
                   buildIconButton(Icons.leaderboard, 'Rank', Colors.deepPurple,
                           () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => RankPage(
-                            rank: rank,
-                          )),
-                        );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => RankPage(rank: rank)),
+                    );
+                        // Navigator.push(
+                        //   context,
+                        //   MaterialPageRoute(builder: (context) => RankPage(
+                        //     rank: rank,
+                        //   )),
+                        // );
                       }
                   ),
                 ],

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:quiz/component/drawer.dart';
 import 'package:quiz/global/global.dart';
 import 'package:http/http.dart' as http;
 import 'package:quiz/screen/reset_passwordPage.dart';
@@ -146,131 +147,94 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
         backgroundColor: Themer.buttonColor,
        // automaticallyImplyLeading: false,
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(5,0,0,5),
-          children: [
-             DrawerHeader(
-              decoration: BoxDecoration(
-                color: Themer.buttonColor,
-              ), //BoxDecoration
-              child: UserAccountsDrawerHeader(
-                decoration: BoxDecoration(color: Themer.buttonColor),
-                accountName: Padding(
-                  padding: EdgeInsets.only(top: 30),
-                  child: Text(
-                    "${Global.userFirstName} ${Global.userLastName}",
-                    style: TextStyle(fontSize: 18),
-                  ),
-                ),
-                accountEmail: Text("${Global.userEmail}"),
-                currentAccountPictureSize: Size.square(50),
-                currentAccountPicture: CircleAvatar(
-                  backgroundColor: Colors.white,
-                  child: Icon(Icons.person, color: Colors.grey,size: 40,),
-                ), //circleAvatar
-              ), //UserAccountDrawerHeader
-            ), //Drawe
-            Padding(
-              padding: const EdgeInsets.only(top: 30.0,left: 20,right: 20),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+      drawer: CustomDrawer.show(context),
+      // Container(
+      //   width: MediaQuery.of(context).size.width * 0.75, // Set the width to 75% of the screen width
+      //   child: Drawer(
+      //     child: Container(
+      //       width: MediaQuery.of(context).size.width * 0.75, // Set the width to 75% of the screen width
+      //       child: ListView(
+      //         padding: const EdgeInsets.fromLTRB(0, 0, 0, 5),
+      //         children: [
+      //           Container(
+      //             // Header container with background color
+      //             padding: EdgeInsets.only(top: 50, bottom: 20, left: 30), // Add left padding
+      //             color: Themer.buttonColor,
+      //             child: Column(
+      //               crossAxisAlignment: CrossAxisAlignment.start, // Align content to the left
+      //               children: [
+      //                 CircleAvatar(
+      //                   radius: 50, // Large size for the profile image
+      //                   backgroundColor: Colors.white,
+      //                   child: Global.userImagePath!.isNotEmpty
+      //                       ? ClipOval(
+      //                     child: Image.network(
+      //                       Global.userImagePath!,
+      //                       width: 100, // Match the radius * 2
+      //                       height: 100,
+      //                       fit: BoxFit.cover,
+      //                     ),
+      //                   )
+      //                       : Icon(Icons.person, color: Colors.grey, size: 60),
+      //                 ),
+      //                 SizedBox(height: 10),
+      //                 Text(
+      //                   "${Global.userFirstName} ${Global.userLastName}",
+      //                   style: TextStyle(fontSize: 18, color: Colors.white),
+      //                 ),
+      //                 Text(
+      //                   "${Global.userEmail}",
+      //                   style: TextStyle(color: Colors.white70),
+      //                 ),
+      //               ],
+      //             ),
+      //           ),
+      //           Divider(), // Add a divider line between the header and the list tiles
+      //           ListTile(
+      //             leading: Icon(Icons.person, color: Themer.buttonColor),
+      //             title: const Text(
+      //               'Update Profile',
+      //               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      //             ),
+      //             onTap: () {
+      //               Navigator.push(
+      //                 context,
+      //                 MaterialPageRoute(builder: (context) => EditProfile()),
+      //               );
+      //             },
+      //           ),
+      //           ListTile(
+      //             leading: Icon(Icons.password, color: Themer.buttonColor),
+      //             title: const Text(
+      //               'Reset Password',
+      //               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      //             ),
+      //             onTap: () {
+      //               Navigator.push(
+      //                 context,
+      //                 MaterialPageRoute(builder: (context) => ResetPasswordPage()),
+      //               );
+      //             },
+      //           ),
+      //           ListTile(
+      //             leading: const Icon(Icons.logout, color: Themer.buttonColor),
+      //             title: const Text(
+      //               'Logout',
+      //               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      //             ),
+      //             onTap: () {
+      //               _logout(context);
+      //             },
+      //           ),
+      //         ],
+      //       ),
+      //     ),
+      //   ),
+      // ),
 
-                  // const Center(
-                  //   child:  Image(
-                  //     width: 100,
-                  //     height: 100,
-                  //     image: AssetImage('assets/images/quiz_logo1.png'),
-                  //     fit: BoxFit.contain,
-                  //   ),
-                  // ),
 
 
-                  // Center(
-                  //   child: Container(
-                  //     padding: const EdgeInsets.all(10),
-                  //     decoration: BoxDecoration(
-                  //       border: Border.all(color: Colors.grey),
-                  //       borderRadius: BorderRadius.circular(50),
-                  //     ),
-                  //     child: SizedBox(
-                  //       width: 80,
-                  //       height: 80,
-                  //       child: Icon(Icons.person, color: Colors.grey,size: 80,),
-                  //     ),
-                  //   ),
-                  // ),
-
-                  // const SizedBox(height: 20,),
-                  //
-                  // Container(
-                  //   width: double.infinity,
-                  //   padding: const EdgeInsets.all(10),
-                  //   decoration:  BoxDecoration(
-                  //     gradient: LinearGradient(
-                  //       begin: Alignment.topLeft,
-                  //       end: Alignment.bottomRight,
-                  //       colors: [Themer.buttonColor, Themer.textColor],
-                  //     ),
-                  //     borderRadius: BorderRadius.all(Radius.circular(10)),
-                  //   ),
-                  //   child:Wrap(
-                  //     children: [
-                  //       // const Icon(Icons.person,color: Themer.textColor,),
-                  //       const SizedBox(width: 10,),
-                  //       Column(
-                  //         mainAxisAlignment: MainAxisAlignment.start,
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: [
-                  //
-                  //           Text("${Global.userFirstName} ${Global.userLastName}",style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 18,color: Colors.white),),
-                  //           const SizedBox(height: 5,),
-                  //           // Text(PbcAppInstance.instance.fullName.isEmpty?'Complete Profile Detail': PbcAppInstance.instance.fullName,
-                  //           //   style: TextStyle(color: Colors.grey,),),
-                  //         ],
-                  //       )
-                  //     ],
-                  //   ),
-                  // ),
-                  // const SizedBox(height: 10,),
-                ],
-              ),
-            ),
-            ListTile(
-              leading: Icon(Icons.person,color: Themer.buttonColor,),
-              title: const Text(' Edit Profile ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => EditProfile()),
-                );
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.password,color: Themer.buttonColor,),
-              title: const Text(' Reset Password ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ResetPasswordPage()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout,color: Themer.buttonColor,),
-              title: const Text(' Logout ',style: TextStyle(fontWeight: FontWeight.bold,fontSize: 18),),
-              onTap: () {
-                _logout(context);
-              },
-            ),
-          ],
-        ),
-      ),
-      body: _isLoading
+        body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Padding(
         padding: const EdgeInsets.all(16.0),
