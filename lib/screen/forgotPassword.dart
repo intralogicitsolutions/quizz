@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
-import 'package:quiz/screen/resetPassword.dart';
+import 'package:quiz/screen/otpVerification.dart';
 
 import '../theme/theme.dart';
 
@@ -28,15 +28,39 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
       final Map<String, dynamic> responseData = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        final String? resetToken = responseData['resetToken'];
-        if(resetToken != null) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ResetPassword(token: resetToken),
-            ),
-          );
-        }
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text('Success'),
+            content: Text('OTP sent successfully to your email.'),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  // Close the dialog and navigate to the OTP verification page
+                  Navigator.pop(context); // Close the dialog
+
+                  // Navigate to the OTP Verification page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => OtpVerification(email: _emailController.text), // Pass the email if needed
+                    ),
+                  );
+                },
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+        // final String? resetToken = responseData['resetToken'];
+        // if(resetToken != null) {
+        //   Navigator.push(
+        //     context,
+        //     MaterialPageRoute(
+        //       builder: (context) => ResetPassword(token: resetToken),
+        //     ),
+        //   );
+        // }
       } else {
         // Handle error
         print(responseData['message']);

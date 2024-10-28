@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import '../component/snackBar.dart';
+import '../global/tokenStorage.dart';
 import '../theme/theme.dart';  // For jsonEncode
 
 class ResetPasswordPage extends StatefulWidget {
@@ -13,7 +14,7 @@ class ResetPasswordPage extends StatefulWidget {
 
 class _ResetPasswordPageState extends State<ResetPasswordPage> {
   final _formKey = GlobalKey<FormState>();
-  String? _email;
+  String?_currentPassword;
   String? _newPassword;
   String? _confirmPassword;
 
@@ -54,7 +55,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
             children: [
               TextFormField(
                 decoration: const InputDecoration(
-                  labelText: 'Email',
+                  labelText: 'Current Password',
                   border: OutlineInputBorder(),
                 ),
                 keyboardType: TextInputType.emailAddress,
@@ -65,7 +66,7 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
                   return null;
                 },
                 onChanged: (value) {
-                  _email = value;
+                  _currentPassword = value;
                 },
               ),
               const SizedBox(height: 16),
@@ -120,41 +121,38 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
     );
   }
 
+
   Future<void> _resetPassword() async {
     if (_formKey.currentState!.validate()) {
       // Make the API call
       try {
+        String? token = await TokenStorage.getToken();
         final response = await http.post(
+
           Uri.parse('https://quizz-app-backend-3ywc.onrender.com/auth/reset_password'),
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': "Bearer $token"
           },
+
           body: jsonEncode({
-            'email_id': _email,
-            'newPassword': _newPassword,
+            'password': _currentPassword,
+            'newPassword': _newPassword?.isNotEmpty == true ? _newPassword : '', // Empty newPassword for verification only
           }),
         );
+        final responseBody = jsonDecode(response.body);
 
         if (response.statusCode == 200) {
-          // Handle success
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   const SnackBar(content: Text('Password reset successfully!')),
-          // );
-          CustomSnackbar.show(context, 'Password reset successfully!');
-          Navigator.pop(context);
+          CustomSnackbar.show(context, responseBody['message']);
+          //Navigator.pop(context);
+          if (_newPassword?.isNotEmpty == true) {
+            Navigator.pop(context);
+          }
         } else {
           // Handle error response
-          final errorResponse = jsonDecode(response.body);
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(content: Text(errorResponse['message'] ?? 'Error occurred')),
-          // );
-          CustomSnackbar.show(context, 'Error: ${errorResponse['message'] ?? 'Error occurred'}');
+          CustomSnackbar.show(context, 'Error: ${responseBody['message']}');
         }
       } catch (e) {
-        // Handle any exceptions
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   const SnackBar(content: Text('Error occurred. Please try again.')),
-        // );
         CustomSnackbar.show(context, 'Error occurred. Please try again.');
       }
     }

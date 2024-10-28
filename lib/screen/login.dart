@@ -206,10 +206,7 @@ class _LoginFormState extends State<LoginForm> {
         'last_name': _lastNameController.text.trim(),
         'email_id': _emailController.text.trim(),
         'password': _passwordController.text.trim(),
-        // Set image_path if it's not necessary to send the file
         'image_path': imgUrl ?? '',
-        //'image_path': _image != null ? '$imgUrl/${_image!.path.split('/').last}' : '', // Construct full image URL
-        //'image_path': _image != null ? _image!.path.split('/').last : '', // Extract filename
       };
 
       // Send the request as JSON

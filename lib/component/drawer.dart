@@ -29,14 +29,14 @@ class CustomDrawer {
                   crossAxisAlignment: CrossAxisAlignment.start, // Align content to the left
                   children: [
                     CircleAvatar(
-                      radius: 50, // Large size for the profile image
+                      radius: 40, // Large size for the profile image
                       backgroundColor: Colors.white,
-                      child: Global.userImagePath!.isNotEmpty
+                      child: (Global.userImagePath != null && Global.userImagePath!.isNotEmpty)
                           ? ClipOval(
                         child: Image.network(
                           Global.userImagePath!,
-                          width: 100, // Match the radius * 2
-                          height: 100,
+                          width: 80, // Match the radius * 2
+                          height: 80,
                           fit: BoxFit.cover,
                         ),
                       )

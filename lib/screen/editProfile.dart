@@ -216,14 +216,14 @@ class _EditProfileState extends State<EditProfile> {
                         GestureDetector(
                           onTap: pickImage,
                           child: CircleAvatar(
-                            radius: 50,
+                            radius: 40,
                             backgroundImage: _profileImage != null
                                 ? FileImage(_profileImage!)
                                 : (_profileImageUrl != null
                                 ? NetworkImage(_profileImageUrl!)
                                 : null), // No background image if no profile image is available
                             child: _profileImage == null && _profileImageUrl == null
-                                ? const Icon(Icons.person, size: 50, color: Colors.grey) // Display person icon if no image
+                                ? const Icon(Icons.person, size: 40, color: Colors.grey) // Display person icon if no image
                                 : null,
                           ),
                         ),
