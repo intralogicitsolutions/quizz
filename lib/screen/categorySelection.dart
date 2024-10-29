@@ -128,6 +128,7 @@ class _CategorySelectionPageState extends State<CategorySelectionPage> {
         ),
         backgroundColor: Themer.buttonColor,
       ),
+
       body: isLoading? const Center(child: CircularProgressIndicator())
           :Column(
         children: [
