@@ -11,6 +11,7 @@ import 'package:quiz/screen/scorePage.dart';
 import 'package:quiz/theme/theme.dart';
 import 'package:http/http.dart' as http;
 
+import '../component/drawer.dart';
 import '../global/tokenStorage.dart';
 
 
@@ -320,90 +321,48 @@ print("url is==> ${url}");
         );
       },
     ).show();
-    // showDialog(
-    //   context: context,
-    //   builder: (_) => Stack(
-    //     children: [
-    //       //ConfettiWidget(
-    //        //  confettiController: confettiController,
-    //        // blastDirection: pi / 2, // Direction of the confetti
-    //        //  emissionFrequency: 0.2,
-    //        //  numberOfParticles: 20,
-    //        //  blastDirectionality: BlastDirectionality.explosive,
-    //        //  gravity: 0.1,
-    //        //  colors: const [Colors.red, Colors.green, Colors.blue, Colors.yellow], // Custom colors
-    //         //child:
-    //         AlertDialog(
-    //           title: const Text('Quiz Completed!',style: TextStyle(
-    //             fontSize: 22, fontWeight: FontWeight.w500
-    //           ),),
-    //           // content: Text('You have finished the quiz.'),
-    //           content: const Column(
-    //             mainAxisSize: MainAxisSize.min,
-    //             children: [
-    //               Text('You have finished the quiz.',style: TextStyle(
-    //                 fontWeight: FontWeight.w400, fontSize: 16
-    //               ),),
-    //             ],
-    //           ),
-    //           actions: [
-    //             TextButton(
-    //               onPressed: () {
-    //                 // confettiController.stop();
-    //
-    //                   Navigator.push(
-    //                     context,
-    //                     MaterialPageRoute(builder: (context) => ScorePage(
-    //                       correctAnswers: correctAnswers,
-    //                       scorePercentage: scorePercentage,
-    //                       totalQuestions: totalQuestions,
-    //                       wrongAnswers: wrongAnswers,
-    //                       selectedAnswer: selectedAnswers,
-    //                       correctAnswersList: quizData!.data!.map((e) => e.correctAnswer!).toList(),
-    //                       categoryName: widget.categoryName,
-    //                       examId: widget.examId,
-    //                       questionId: quizData!.data!.map((e) => e.sId!).toList(),
-    //                       userAnswer: selectedAnswers,
-    //
-    //                     )),
-    //                   );
-    //               },
-    //               child: const Text('Finish',style: TextStyle(
-    //                 fontSize: 18, fontWeight: FontWeight.w600
-    //               ),),
-    //             ),
-    //           ],
-    //         ),
-    //      // ),
-    //     ],
-    //   ),
-    // );
-
 
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: AppBar(
+      //   title: Text('${widget.categoryName}'.toUpperCase(),
+      //     style: const TextStyle(color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),
+      //   ),
+      //   automaticallyImplyLeading: false,
+      //   centerTitle: true,
+      //   elevation: 0,
+      //   titleSpacing: 00.0,
+      //   toolbarHeight: 60.2,
+      //   toolbarOpacity: 0.8,
+      //   shape: const RoundedRectangleBorder(
+      //     borderRadius: BorderRadius.only(
+      //         bottomRight: Radius.circular(25),
+      //         bottomLeft: Radius.circular(25)),
+      //   ),
+      //   backgroundColor: Themer.buttonColor,
+      //   iconTheme: const IconThemeData(color: Colors.black),
+      //   systemOverlayStyle: SystemUiOverlayStyle.light,
+      // ),
       appBar: AppBar(
-        title: Text('${widget.categoryName}'.toUpperCase(),
+        elevation: 0,
+        title:Text('${widget.categoryName}'.toUpperCase(),
           style: const TextStyle(color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),
         ),
-        automaticallyImplyLeading: false,
         centerTitle: true,
-        elevation: 0,
-        titleSpacing: 00.0,
+        iconTheme: IconThemeData(color: Colors.white),
         toolbarHeight: 60.2,
-        toolbarOpacity: 0.8,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
               bottomRight: Radius.circular(25),
               bottomLeft: Radius.circular(25)),
         ),
         backgroundColor: Themer.buttonColor,
-        iconTheme: const IconThemeData(color: Colors.black),
-        systemOverlayStyle: SystemUiOverlayStyle.light,
+        // automaticallyImplyLeading: false,
       ),
+      drawer: CustomDrawer.show(context),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child:quizData == null || quizData!.data == null || quizData!.data!.isEmpty

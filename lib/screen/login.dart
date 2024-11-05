@@ -100,6 +100,7 @@ class _LoginFormState extends State<LoginForm> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   File? _image;
+  String? _imageFilename;
   bool isPasswordVisible = false;
   bool isLoading = false;
 
@@ -176,6 +177,7 @@ class _LoginFormState extends State<LoginForm> {
         if (response.statusCode == 200) {
           final Map<String, dynamic> imageResponse = jsonDecode(responseData.body);
           imgUrl = imageResponse['data']['img_url']; // Get img_url from the response
+          _imageFilename = imageResponse['data']['filename'];
         } else {
           // Handle image upload error
           print('Image upload failed: ${responseData.body}');
@@ -363,17 +365,41 @@ class _LoginFormState extends State<LoginForm> {
                   //   ],
                   // ),
                   child: _image == null
+                      ? (_imageFilename == null
                       ? Container(
                     width: 80,
                     height: 80,
-                    child: Icon(Icons.person, color: Colors.grey,size: 80,),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[200],
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(Icons.person, color: Colors.grey, size: 40),
                   )
-                  // const Text('Select an image (optional)')
-                      : Image.file(
-                    _image!,
+                      : Image.network(
+                    'https://quizz-app-backend-3ywc.onrender.com/images/uploads/$_imageFilename',
                     width: 80,
                     height: 80,
                     fit: BoxFit.cover,
+                  ))
+                      : ClipOval(
+                    child: Image.file(
+                      _image!,
+                      width: 80,
+                      height: 80,
+                      fit: BoxFit.cover,
+                    ),
+                  // child: _image == null
+                  //     ? Container(
+                  //   width: 80,
+                  //   height: 80,
+                  //   child: Icon(Icons.person, color: Colors.grey,size: 80,),
+                  // )
+                  // // const Text('Select an image (optional)')
+                  //     : Image.file(
+                  //   _image!,
+                  //   width: 80,
+                  //   height: 80,
+                  //   fit: BoxFit.cover,
                   ),
                 ),
               ),

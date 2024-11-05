@@ -58,7 +58,6 @@ class _EditProfileState extends State<EditProfile> {
           _profileImageUrl = getProfileResponse.data?.imagePath ?? '';
           _isLoadingProfile = false;
         });
-        print('Get Image Url is ==> ${_profileImageUrl}');
       } else {
         _showSnackBar('Failed to fetch profile data');
         _isLoadingProfile = false;
@@ -74,15 +73,15 @@ class _EditProfileState extends State<EditProfile> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Select Image Source',style: TextStyle(fontSize: 22,fontWeight: FontWeight.w400),),
+          title: const Text('Select Image Source', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w400)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, ImageSource.camera),
-              child: const Text('Camera', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18),),
+              child: const Text('Camera', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, ImageSource.gallery),
-              child: const Text('Gallery', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18),),
+              child: const Text('Gallery', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 18)),
             ),
           ],
         );
@@ -102,11 +101,11 @@ class _EditProfileState extends State<EditProfile> {
 
   Future<void> _uploadImage(File imageFile) async {
     String url = 'https://quizz-app-backend-3ywc.onrender.com/images/upload';
-    String? token = await TokenStorage.getToken();
+    // String? token = await TokenStorage.getToken();
 
     try {
       var request = http.MultipartRequest('POST', Uri.parse(url));
-      request.headers['Authorization'] = "Bearer $token";
+      // request.headers['Authorization'] = "Bearer $token";
       request.files.add(await http.MultipartFile.fromPath('image', imageFile.path));
 
       var response = await request.send();
@@ -114,6 +113,7 @@ class _EditProfileState extends State<EditProfile> {
 
       if (response.statusCode == 200) {
         var data = jsonDecode(responseData);
+        print('image data =====> ${data}');
         setState(() {
           _profileImageUrl = data['data']['img_url'];
         });
@@ -162,7 +162,6 @@ class _EditProfileState extends State<EditProfile> {
           context,
           MaterialPageRoute(builder: (context) => LanguageSelectionPage()),
         );
-        print('Upadate image url is : ${Global.userImagePath}');
       } else {
         _showSnackBar('Failed to update profile');
       }
@@ -221,9 +220,9 @@ class _EditProfileState extends State<EditProfile> {
                                 ? FileImage(_profileImage!)
                                 : (_profileImageUrl != null
                                 ? NetworkImage(_profileImageUrl!)
-                                : null), // No background image if no profile image is available
+                                : null),
                             child: _profileImage == null && _profileImageUrl == null
-                                ? const Icon(Icons.person, size: 40, color: Colors.grey) // Display person icon if no image
+                                ? const Icon(Icons.person, size: 40, color: Colors.grey)
                                 : null,
                           ),
                         ),
@@ -262,6 +261,7 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 }
+
 
 
 // import 'dart:convert';
