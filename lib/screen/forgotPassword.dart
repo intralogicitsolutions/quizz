@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:quiz/screen/otpVerification.dart';
 
+import '../global/global.dart';
 import '../theme/theme.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -16,7 +17,7 @@ class ForgotPassword extends StatefulWidget {
 
 class _ForgotPasswordState extends State<ForgotPassword> {
   final _emailController = TextEditingController();
-  final String forgotPasswordUrl = 'https://quizz-app-backend-3ywc.onrender.com/auth/forgotPassword';
+  final String forgotPasswordUrl = Global.BASE_URL + 'auth/forgotPassword';
 
   Future<void> handleForgotPassword() async {
     try {
@@ -52,15 +53,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             ],
           ),
         );
-        // final String? resetToken = responseData['resetToken'];
-        // if(resetToken != null) {
-        //   Navigator.push(
-        //     context,
-        //     MaterialPageRoute(
-        //       builder: (context) => ResetPassword(token: resetToken),
-        //     ),
-        //   );
-        // }
+
       } else {
         // Handle error
         print(responseData['message']);

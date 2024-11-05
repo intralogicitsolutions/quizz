@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-// import 'package:confetti/confetti.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -12,6 +11,7 @@ import 'package:quiz/theme/theme.dart';
 import 'package:http/http.dart' as http;
 
 import '../component/drawer.dart';
+import '../global/global.dart';
 import '../global/tokenStorage.dart';
 
 
@@ -39,7 +39,6 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
   Duration quizDuration = const Duration(minutes: 10); // 30-minute timer
   quizModel.QuizModel? quizData;
   bool? isLoading;
-  // late ConfettiController confettiController;
 
   _QuizPageState() : selectedAnswers = [];
 
@@ -47,7 +46,6 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     selectedAnswers = widget.selectedAnswers ?? List<int?>.filled(quizData?.data?.length ?? 10, null); // Initialize with selected answers or default values
-    // confettiController = ConfettiController(duration: const Duration(seconds: 1));
     if (!widget.reviewMode) {
       startTimer();
     }
@@ -67,12 +65,11 @@ class _QuizPageState extends State<QuizPage> with TickerProviderStateMixin {
   void dispose() {
     countdownTimer?.cancel();
     _controller.dispose();
-    // confettiController.dispose();// Cancel the timer when the widget is disposed
     super.dispose();
   }
 
   Future<void> fetchQuizData() async {
-    final url = "https://quizz-app-backend-3ywc.onrender.com/question/?question_id=${widget.examId}"; // Replace with actual URL
+    final url = Global.BASE_URL + "question/?question_id=${widget.examId}"; // Replace with actual URL
     try {
       String? token = await TokenStorage.getToken();
 
@@ -287,17 +284,7 @@ print("url is==> ${url}");
               active: true,
               size: 90, iconType: IconType.check),
         )
-        // child: IconAnimated(
-        //   color: Colors.black,
-        //   active: active,
-        //   size: 100,
-        //   iconType: IconType.check,
-        // ),
-        // child: Icon(
-        //   Icons.check_circle,  // Custom success icon
-        //   color: Themer.buttonColor,
-        //   size: 90,
-        // ),
+
       ),
       title: "Quiz Completed!",
       desc: "You have finished the quiz",
@@ -327,25 +314,7 @@ print("url is==> ${url}");
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text('${widget.categoryName}'.toUpperCase(),
-      //     style: const TextStyle(color: Colors.white, fontSize: 20,fontWeight: FontWeight.w600,),
-      //   ),
-      //   automaticallyImplyLeading: false,
-      //   centerTitle: true,
-      //   elevation: 0,
-      //   titleSpacing: 00.0,
-      //   toolbarHeight: 60.2,
-      //   toolbarOpacity: 0.8,
-      //   shape: const RoundedRectangleBorder(
-      //     borderRadius: BorderRadius.only(
-      //         bottomRight: Radius.circular(25),
-      //         bottomLeft: Radius.circular(25)),
-      //   ),
-      //   backgroundColor: Themer.buttonColor,
-      //   iconTheme: const IconThemeData(color: Colors.black),
-      //   systemOverlayStyle: SystemUiOverlayStyle.light,
-      // ),
+
       appBar: AppBar(
         elevation: 0,
         title:Text('${widget.categoryName}'.toUpperCase(),

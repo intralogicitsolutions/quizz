@@ -54,7 +54,7 @@ class _ScorePageState extends State<ScorePage> {
     });
     await collectUserResponsesAndSubmit();
     final url = Uri.parse(
-        'https://quizz-app-backend-3ywc.onrender.com/exam_result?user_id=$userId&exam_id=${widget.examId}');
+        Global.BASE_URL + 'exam_result?user_id=$userId&exam_id=${widget.examId}');
     print('getExamResult api url :: $url');
     try {
       String? token = await TokenStorage.getToken();
@@ -95,7 +95,7 @@ class _ScorePageState extends State<ScorePage> {
 
   Future<CreateExamRersultModel?> submitExamResult(
       String? userId, String? examId, double? score, List<Map<String, dynamic>> resultList) async {
-    final url = Uri.parse('https://quizz-app-backend-3ywc.onrender.com/exam_result');
+    final url = Uri.parse(Global.BASE_URL + 'exam_result');
     print('submitExamResult api url :: $url');
 
     Map<String, dynamic> body = {
@@ -133,7 +133,7 @@ class _ScorePageState extends State<ScorePage> {
   }
 
   Future<bool> updateExamResult(String id, double? score) async {
-    const String apiUrl = 'https://quizz-app-backend-3ywc.onrender.com/exam_result';
+    String apiUrl = Global.BASE_URL + 'exam_result';
     Map<String, dynamic> body = {
       'score': score,
       'user_id': Global.userId,
@@ -386,12 +386,7 @@ class _ScorePageState extends State<ScorePage> {
                       context,
                       MaterialPageRoute(builder: (context) => RankPage(rank: rank)),
                     );
-                        // Navigator.push(
-                        //   context,
-                        //   MaterialPageRoute(builder: (context) => RankPage(
-                        //     rank: rank,
-                        //   )),
-                        // );
+
                       }
                   ),
                 ],

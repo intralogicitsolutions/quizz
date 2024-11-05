@@ -177,6 +177,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart' as http;
 
+import '../global/global.dart';
 import '../theme/theme.dart';
 import 'login.dart';
 
@@ -193,7 +194,7 @@ class _OtpVerificationState extends State<OtpVerification> {
   final _otpController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final String resetPasswordUrl = 'https://quizz-app-backend-3ywc.onrender.com/auth/resetPassword';
+  final String resetPasswordUrl = Global.BASE_URL + 'auth/resetPassword';
 
   Future<void> handleResetPassword() async {
     // Validate that the new password and confirm password match

@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:quiz/component/drawer.dart';
 import 'package:quiz/global/global.dart';
 import 'package:http/http.dart' as http;
-import 'package:quiz/screen/reset_passwordPage.dart';
 import 'package:quiz/theme/theme.dart';
 import '../component/snackBar.dart';
 import '../global/tokenStorage.dart';
 import '../model/languageModel.dart';
 import 'categorySelection.dart';
-import 'editProfile.dart';
 
 class LanguageSelectionPage extends StatefulWidget {
   const LanguageSelectionPage({super.key});
@@ -43,7 +41,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
         return;
       }
 
-      final url = 'https://quizz-app-backend-3ywc.onrender.com/language';
+      final url = Global.BASE_URL + 'language';
       print("Global token :: ${Global.token}");
       final response = await http.get(
         Uri.parse(url),
@@ -100,7 +98,7 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
 
   Future<void> _callLogoutApi(BuildContext context) async {
     String? token = await TokenStorage.getToken();
-    final String url = 'https://quizz-app-backend-3ywc.onrender.com/auth/logout'; // Replace with your API URL
+    final String url = Global.BASE_URL + 'auth/logout'; // Replace with your API URL
     final response = await http.post(
       Uri.parse(url),
       headers: {
@@ -112,15 +110,9 @@ class _LanguageSelectionPageState extends State<LanguageSelectionPage> {
     if (!context.mounted) return;
 
     if (response.statusCode == 200) {
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   const SnackBar(content: Text('Logout successful')),
-      // );
       CustomSnackbar.show(context, 'Logout successful');
     } else {
       final Map<String, dynamic> responseData = json.decode(response.body);
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(content: Text('Error: ${responseData['message']}')),
-      // );
       CustomSnackbar.show(context, 'Error: ${responseData['message']}');
     }
   }

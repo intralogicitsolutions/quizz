@@ -41,7 +41,7 @@ class _QuestionSelectionState extends State<QuestionSelection> {
 
     // API URL with dynamic difficulty
 
-    final url = "https://quizz-app-backend-3ywc.onrender.com/exam_detail?language_id=${widget.languageId}&category_id=${widget.categoryId}&difficulty=$selectedDifficulty";
+    final url = Global.BASE_URL + "exam_detail?language_id=${widget.languageId}&category_id=${widget.categoryId}&difficulty=$selectedDifficulty";
     print('question selection url :: ${url}');
     try {
       String? token = await TokenStorage.getToken();

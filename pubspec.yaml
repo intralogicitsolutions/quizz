@@ -38,7 +38,6 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   shared_preferences: ^2.3.2
-#  confetti: ^0.7.0
   avatar_glow: ^3.0.1
   awesome_dialog: ^3.2.1
   icon_animated: ^1.2.1
@@ -68,7 +67,6 @@ flutter:
     - family: OpenSans
       fonts:
         - asset: fonts/OpenSans-Regular.ttf
-          style: normal
         - asset: fonts/OpenSans-SemiBold.ttf
         - asset: fonts/OpenSans-Bold.ttf
   #

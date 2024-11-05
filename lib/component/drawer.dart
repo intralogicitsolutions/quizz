@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:quiz/component/snackBar.dart';
-
 import '../global/global.dart';
 import '../global/tokenStorage.dart';
 import '../screen/editProfile.dart';
@@ -59,7 +58,7 @@ class CustomDrawer {
                 leading: Icon(Icons.person, color: Themer.buttonColor),
                 title: const Text(
                   'Update Profile',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 onTap: () {
                   Navigator.push(
@@ -72,7 +71,7 @@ class CustomDrawer {
                 leading: Icon(Icons.password, color: Themer.buttonColor),
                 title: const Text(
                   'Reset Password',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 onTap: () {
                   Navigator.push(
@@ -85,7 +84,7 @@ class CustomDrawer {
                 leading: const Icon(Icons.logout, color: Themer.buttonColor),
                 title: const Text(
                   'Logout',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                 ),
                 onTap: () {
                   _logout(context);
@@ -128,7 +127,7 @@ Future<void> _logout(BuildContext context) async {
 
 Future<void> _callLogoutApi(BuildContext context) async {
   String? token = await TokenStorage.getToken();
-  final String url = 'https://quizz-app-backend-3ywc.onrender.com/auth/logout'; // Replace with your API URL
+  final String url = Global.BASE_URL + 'auth/logout'; // Replace with your API URL
   final response = await http.post(
     Uri.parse(url),
     headers: {
@@ -140,15 +139,9 @@ Future<void> _callLogoutApi(BuildContext context) async {
   if (!context.mounted) return;
 
   if (response.statusCode == 200) {
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   const SnackBar(content: Text('Logout successful')),
-    // );
     CustomSnackbar.show(context, 'Logout successful');
   } else {
     final Map<String, dynamic> responseData = json.decode(response.body);
-    // ScaffoldMessenger.of(context).showSnackBar(
-    //   SnackBar(content: Text('Error: ${responseData['message']}')),
-    // );
     CustomSnackbar.show(context, 'Error: ${responseData['message']}');
   }
 }
